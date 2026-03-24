@@ -1395,7 +1395,7 @@ function renderStats() {
     {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week'},
     {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`},
     {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`},
-    {emoji:'😴',label:'Sat Out Round 1',value:'cflaherty120 & Adam Share',sub:'Both joined from Round 2',detail:''},
+
   ];
 
   document.getElementById('stats-grid').innerHTML = statsData.map(s =>
