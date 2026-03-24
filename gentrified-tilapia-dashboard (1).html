@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gentrified Tilapia 🐟 — Season 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #222;
+    --green: #1DB954;
+    --green-dim: rgba(29,185,84,0.12);
+    --green-glow: rgba(29,185,84,0.35);
+    --amber: #f5a623;
+    --amber-dim: rgba(245,166,35,0.15);
+    --text: #e8e8e8;
+    --muted: #555;
+    --dimmed: #888;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; min-height:100vh; overflow-x:hidden; }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:0.3;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* HEADER */
+  .header { padding:48px 40px 32px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+  .header::after { content:'🐟'; position:absolute; right:-20px; top:-20px; font-size:200px; opacity:0.04; transform:rotate(-15deg); pointer-events:none; }
+  .header-eyebrow { font-family:'Space Mono',monospace; font-size:11px; color:var(--green); letter-spacing:3px; text-transform:uppercase; margin-bottom:8px; }
+  .header-title { font-size:clamp(28px,5vw,52px); font-weight:800; line-height:1; letter-spacing:-1px; }
+  .header-title span { color:var(--green); }
+  .header-meta { margin-top:16px; display:flex; gap:32px; flex-wrap:wrap; }
+  .meta-item { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .meta-item strong { color:var(--dimmed); }
+
+  /* NAV */
+  .nav { display:flex; padding:0 40px; border-bottom:1px solid var(--border); overflow-x:auto; }
+  .nav-tab { padding:16px 24px; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; background:none; border-left:none; border-right:none; border-top:none; }
+  .nav-tab:hover { color:var(--text); }
+  .nav-tab.active { color:var(--green); border-bottom-color:var(--green); }
+
+  /* MAIN */
+  .main { padding:40px; max-width:1400px; margin:0 auto; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* SECTION TITLE */
+  .section-title { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+
+  /* STANDINGS GRID */
+  .standings-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
+  @media(max-width:900px){.standings-grid{grid-template-columns:1fr;}}
+  .podium-card { background:var(--surface); border:1px solid var(--border); padding:32px; position:relative; overflow:hidden; }
+  .podium-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--green); }
+  .podium-label { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:24px; }
+  .podium-row { display:flex; align-items:center; gap:16px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .podium-row:last-child { border-bottom:none; }
+  .podium-rank { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); width:28px; text-align:right; flex-shrink:0; }
+  .podium-rank.gold{color:#FFD700;} .podium-rank.silver{color:#C0C0C0;} .podium-rank.bronze{color:#CD7F32;}
+  .podium-name { font-weight:700; font-size:15px; flex:1; }
+  .podium-pts { font-family:'Space Mono',monospace; font-size:13px; color:var(--green); font-weight:700; white-space:nowrap; }
+  .podium-bar-wrap { flex:1; height:3px; background:var(--border); overflow:hidden; }
+  .podium-bar { height:100%; background:var(--green); transition:width 1s cubic-bezier(0.16,1,0.3,1); }
+
+  /* LEADERBOARD */
+  .leaderboard { background:var(--surface); border:1px solid var(--border); overflow:hidden; }
+  .lb-header { display:grid; grid-template-columns:48px 1fr repeat(3,80px); padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--border); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .lb-row { display:grid; grid-template-columns:48px 1fr repeat(3,80px); padding:16px 20px; border-bottom:1px solid var(--border); align-items:center; transition:background 0.15s; }
+  .lb-row:last-child{border-bottom:none;} .lb-row:hover{background:var(--surface2);}
+  .lb-pos{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);}
+  .lb-pos.gold{color:#FFD700;font-weight:700;} .lb-pos.silver{color:#C0C0C0;font-weight:700;} .lb-pos.bronze{color:#CD7F32;font-weight:700;}
+  .lb-name{font-weight:700;font-size:15px;}
+  .lb-rounds{font-family:'Space Mono',monospace;font-size:12px;color:var(--dimmed);text-align:center;}
+  .lb-voters{font-family:'Space Mono',monospace;font-size:12px;color:var(--dimmed);text-align:center;}
+  .lb-pts{font-family:'Space Mono',monospace;font-size:14px;color:var(--green);font-weight:700;text-align:right;}
+  .lb-pts.zero{color:var(--muted);}
+
+  /* ROUND RESULTS */
+  .round-selector { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .round-btn { padding:8px 16px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; }
+  .round-btn:hover{color:var(--text);border-color:var(--dimmed);}
+  .round-btn.active{color:var(--green);border-color:var(--green);background:var(--green-dim);}
+
+  /* Round summary layout */
+  .round-summary-header { margin-bottom:32px; }
+  .round-summary-title { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
+  .round-summary-desc { color:var(--muted); margin-top:8px; font-size:14px; }
+
+  .round-summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px; }
+  @media(max-width:900px){.round-summary-grid{grid-template-columns:1fr;}}
+
+  .round-card { background:var(--surface); border:1px solid var(--border); padding:0; overflow:hidden; }
+  .round-card-title { padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--border); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+
+  /* Player score bar chart */
+  .player-scores-list { padding:16px 20px; display:flex; flex-direction:column; gap:10px; }
+  .player-score-row { display:flex; align-items:center; gap:10px; }
+  .pscore-name { font-size:13px; font-weight:600; flex:0 0 120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pscore-bar-wrap { flex:1; height:6px; background:var(--border); }
+  .pscore-bar { height:100%; background:var(--green); transition:width 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .pscore-bar.winner { background:#FFD700; }
+  .pscore-val { font-family:'Space Mono',monospace; font-size:12px; color:var(--green); flex:0 0 32px; text-align:right; }
+  .pscore-val.winner { color:#FFD700; }
+  .pscore-val.zero { color:var(--muted); }
+
+  /* Top 3 songs */
+  .top3-list { padding:0; }
+  .top3-song { display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid var(--border); }
+  .top3-song:last-child { border-bottom:none; }
+  .top3-medal { font-size:20px; flex-shrink:0; width:28px; text-align:center; }
+  .top3-info { flex:1; min-width:0; }
+  .top3-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .top3-artist { font-size:12px; color:var(--dimmed); margin-top:2px; }
+  .top3-sub { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); margin-top:3px; }
+  .top3-pts { font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:var(--green); flex-shrink:0; }
+
+  /* Round stats row */
+  .round-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:24px; }
+  .round-stat-cell { background:var(--surface); padding:18px 20px; }
+  .round-stat-label { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .round-stat-value { font-size:20px; font-weight:800; color:var(--text); }
+  .round-stat-sub { font-size:11px; color:var(--dimmed); margin-top:2px; }
+  @media(max-width:700px){.round-stats-row{grid-template-columns:repeat(2,1fr);}}
+
+  /* FUN STATS */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:40px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden;}
+  .stat-card::after{content:attr(data-emoji);position:absolute;bottom:-10px;right:10px;font-size:60px;opacity:0.06;pointer-events:none;}
+  .stat-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .stat-value{font-size:24px;font-weight:800;color:var(--green);line-height:1;margin-bottom:4px;}
+  .stat-sub{font-size:13px;color:var(--dimmed);margin-top:4px;}
+  .stat-detail{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;}
+
+  /* TASTE TABLE */
+  .taste-table{background:var(--surface);border:1px solid var(--border);overflow:hidden;margin-bottom:40px;}
+  .taste-row{display:flex;align-items:flex-start;gap:16px;padding:14px 20px;border-bottom:1px solid var(--border);transition:background 0.15s;}
+  .taste-row:last-child{border-bottom:none;} .taste-row:hover{background:var(--surface2);}
+  .taste-name{font-weight:600;font-size:13px;flex:0 0 130px;padding-top:3px;}
+  .taste-songs{flex:1;}
+  .taste-song-pill{display:inline-block;background:var(--surface2);border:1px solid var(--border);padding:2px 7px;font-size:10px;color:var(--dimmed);margin:2px 3px 2px 0;font-family:'Space Mono',monospace;}
+  .taste-score{font-family:'Space Mono',monospace;font-size:13px;color:var(--green);font-weight:700;flex-shrink:0;padding-top:3px;}
+
+
+
+  .badge{display:inline-block;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+  .badge-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,0.3);}
+
+  /* FOOTER */
+  .footer{padding:32px 40px;border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  .animate{animation:fadeUp 0.35s ease both;}
+</style>
+</head>
+<body>
+
+<header class="header animate">
+  <div class="header-eyebrow">Music League — Season 2</div>
+  <h1 class="header-title">Gentrified Tilapia <span>🐟</span></h1>
+  <div class="header-meta">
+    <div class="meta-item">Rounds <strong>10</strong></div>
+    <div class="meta-item">Players <strong>13</strong></div>
+    <div class="meta-item">Songs/Round <strong>3</strong></div>
+    <div class="meta-item">Completed <strong>7 / 10</strong></div>
+    <div class="meta-item">Last Updated <strong>Round 7 — SigEp Safari</strong></div>
+  </div>
+</header>
+
+<nav class="nav animate">
+  <button class="nav-tab active" onclick="showPanel('standings',this)">Standings</button>
+  <button class="nav-tab" onclick="showPanel('rounds',this)">Round Results</button>
+  <button class="nav-tab" onclick="showPanel('stats',this)">Fun Stats</button>
+</nav>
+
+<main class="main">
+
+  <!-- ===== STANDINGS ===== -->
+  <section class="panel active" id="panel-standings">
+    <div class="standings-grid animate">
+      <div class="podium-card">
+        <div class="podium-label">🏆 Season Leaderboard — Top 5</div>
+        <div id="podium-rows"></div>
+      </div>
+      <div class="podium-card">
+        <div class="podium-label">📊 Season Stats</div>
+        <div id="season-stats-mini"></div>
+      </div>
+    </div>
+    <div class="section-title">Full Standings — after 7 of 10 rounds</div>
+    <div class="leaderboard animate">
+      <div class="lb-header">
+        <div>#</div><div>Player</div>
+        <div style="text-align:center">Rounds</div>
+        <div style="text-align:center">Total Voters</div>
+        <div style="text-align:right">Points</div>
+      </div>
+      <div id="lb-rows"></div>
+    </div>
+  </section>
+
+  <!-- ===== ROUNDS ===== -->
+  <section class="panel" id="panel-rounds">
+    <div class="round-selector" id="round-selector"></div>
+    <div id="round-summary"></div>
+  </section>
+
+  <!-- ===== FUN STATS ===== -->
+  <section class="panel" id="panel-stats">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="section-title">Player Submissions — all rounds</div>
+    <div class="taste-table" id="taste-table"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>Gentrified Tilapia 🐟 Season 2 — 10 Rounds</span>
+  <span>Data through Round 7</span>
+</footer>
+
+<script>
+// =====================================================================
+// DATA
+// =====================================================================
+const PLAYERS = [
+  "Aaron Heger","Steffen LoCascio","Brendon Schmidt","Kevin Potts",
+  "j.suastegui","Tyler Hundley","shaznasty","Ben King",
+  "Vic Alonso","Tej vill","Adam Share","Rick Rob","cflaherty120"
+];
+
+const ROUNDS = [
+  {
+    num:1, name:"Fresh Cuts (2025-26)",
+    desc:"Pick your favorite new tracks since 2025. Try to avoid mainstream pop (unless it's an absolute banger)",
+    songs:[
+      {title:"come on home",artist:"Royel Otis",pts:8,voters:7,sub:"Steffen LoCascio"},
+      {title:"Last Train to London",artist:"Rikas",pts:8,voters:7,sub:"Steffen LoCascio"},
+      {title:"No Broke Boys",artist:"Disco Lines",pts:8,voters:7,sub:"shaznasty"},
+      {title:"Let It All Out",artist:"LEISURE",pts:8,voters:6,sub:"j.suastegui"},
+      {title:"Man I Need",artist:"Olivia Dean",pts:6,voters:6,sub:"j.suastegui"},
+      {title:"The Fate of Ophelia",artist:"Taylor Swift",pts:5,voters:5,sub:"Tej vill"},
+      {title:"Yougotmefeeling",artist:"Parcels",pts:5,voters:4,sub:"Vic Alonso"},
+      {title:"I Run",artist:"HAVEN.",pts:5,voters:4,sub:"Vic Alonso"},
+      {title:"Love Moves Slow",artist:"Eddie 9V",pts:4,voters:4,sub:"Brendon Schmidt"},
+      {title:"Blessings",artist:"Calvin Harris",pts:4,voters:4,sub:"Tej vill"},
+      {title:"I Only Smoke When I Drink",artist:"nimino",pts:4,voters:4,sub:"Kevin Potts"},
+      {title:"Gild the Lily",artist:"Billy Strings",pts:4,voters:3,sub:"Brendon Schmidt"},
+      {title:"Ifyoucall",artist:"Parcels",pts:4,voters:3,sub:"j.suastegui"},
+      {title:"The Days - NOTION Remix",artist:"Chrystal",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"Madalena",artist:"Goose",pts:3,voters:3,sub:"Ben King"},
+      {title:"SEEIN' STARS",artist:"Turnstile",pts:3,voters:3,sub:"Brendon Schmidt"},
+      {title:"Golden",artist:"HUNTR/X",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"Talk of the Town",artist:"Fred again..",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"Love Sosa",artist:"Chief Keef",pts:3,voters:2,sub:"Tej vill"},
+      {title:"Dracula",artist:"Tame Impala",pts:3,voters:2,sub:"Vic Alonso"},
+      {title:"All I Need",artist:"Maribou State",pts:2,voters:2,sub:"Aaron Heger"},
+      {title:"DAISIES",artist:"Justin Bieber",pts:2,voters:2,sub:"Tyler Hundley"},
+      {title:"Espresso",artist:"Sabrina Carpenter",pts:2,voters:2,sub:"Rick Rob"},
+      {title:"Si Antes Te Hubiera Conocido",artist:"KAROL G",pts:2,voters:2,sub:"Rick Rob"},
+      {title:"Wood",artist:"Taylor Swift",pts:2,voters:2,sub:"Aaron Heger"},
+      {title:"People Settle Down",artist:"Way Dynamic",pts:1,voters:1,sub:"Steffen LoCascio"},
+      {title:"The Little Mess You Made",artist:"The Favors",pts:1,voters:1,sub:"Ben King"},
+      {title:"Ordinary (feat. Luke Combs)",artist:"Alex Warren",pts:1,voters:1,sub:"shaznasty"},
+      {title:"Pink Pony Club",artist:"Chappell Roan",pts:1,voters:1,sub:"shaznasty"},
+      {title:"There's A Rhythmn",artist:"Bon Iver",pts:1,voters:1,sub:"Ben King"},
+      {title:"No More Tears - live",artist:"Avery Anna",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"Man I Need - Remix",artist:"MXTrk",pts:0,voters:0,sub:"Tyler Hundley"},
+      {title:"DtMF",artist:"Bad Bunny",pts:0,voters:0,sub:"Rick Rob"},
+    ]
+  },
+  {
+    num:2, name:"Exit Music — Songs at Your Funeral",
+    desc:"All we are is Dust in the Wind, you're my boy Blue! Songs you'd want played at your funeral",
+    songs:[
+      {title:"My Way",artist:"Frank Sinatra",pts:9,voters:8,sub:"Kevin Potts"},
+      {title:"Dust in the Wind",artist:"Kansas",pts:8,voters:7,sub:"Brendon Schmidt"},
+      {title:"Free Bird",artist:"Lynyrd Skynyrd",pts:7,voters:7,sub:"j.suastegui"},
+      {title:"Into the Mystic",artist:"Van Morrison",pts:7,voters:6,sub:"Brendon Schmidt"},
+      {title:"Let It Be",artist:"The Beatles",pts:6,voters:6,sub:"Aaron Heger"},
+      {title:"One Last Breath",artist:"Creed",pts:6,voters:6,sub:"shaznasty"},
+      {title:"Now We Are Free",artist:"Hans Zimmer",pts:6,voters:5,sub:"Adam Share"},
+      {title:"Don't Let The Sun Go Down On Me",artist:"Elton John",pts:5,voters:5,sub:"Ben King"},
+      {title:"Stairway to Heaven",artist:"Led Zeppelin",pts:5,voters:4,sub:"Rick Rob"},
+      {title:"Good Riddance (Time of Your Life)",artist:"Green Day",pts:4,voters:4,sub:"Aaron Heger"},
+      {title:"Landslide",artist:"Fleetwood Mac",pts:4,voters:4,sub:"Aaron Heger"},
+      {title:"I Believe I Can Fly",artist:"R. Kelly",pts:4,voters:4,sub:"Ben King"},
+      {title:"Lucky Man",artist:"The Verve",pts:4,voters:4,sub:"j.suastegui"},
+      {title:"Big Pimpin'",artist:"JAY-Z",pts:4,voters:4,sub:"Tyler Hundley"},
+      {title:"Will You Be There",artist:"Michael Jackson",pts:4,voters:4,sub:"Ben King"},
+      {title:"Con Te Partirò",artist:"Andrea Bocelli",pts:4,voters:4,sub:"j.suastegui"},
+      {title:"The End",artist:"The Doors",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"American Pie",artist:"Don McLean",pts:3,voters:3,sub:"Vic Alonso"},
+      {title:"Behind Blue Eyes",artist:"Limp Bizkit",pts:3,voters:3,sub:"Tej vill"},
+      {title:"Turn The Page - Live",artist:"Bob Seger",pts:3,voters:3,sub:"Tej vill"},
+      {title:"The Sound of Silence",artist:"Disturbed",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"Alive",artist:"Pearl Jam",pts:3,voters:3,sub:"Brendon Schmidt"},
+      {title:"Home Sweet Home",artist:"Mötley Crüe",pts:3,voters:3,sub:"Steffen LoCascio"},
+      {title:"Without You (feat. Sandro Cavazza)",artist:"Avicii",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"Jumper",artist:"Third Eye Blind",pts:2,voters:2,sub:"Vic Alonso"},
+      {title:"Hail Mary",artist:"2Pac",pts:2,voters:2,sub:"Kevin Potts"},
+      {title:"The Largest",artist:"BigXthaPlug",pts:2,voters:2,sub:"shaznasty"},
+      {title:"Unchained Melody",artist:"The Righteous Brothers",pts:1,voters:1,sub:"Steffen LoCascio"},
+      {title:"Black Betty",artist:"Ram Jam",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"Hit 'Em Up",artist:"2Pac",pts:1,voters:1,sub:"Steffen LoCascio"},
+      {title:"Nothing Else Matters",artist:"Metallica",pts:0,voters:0,sub:"Tej vill"},
+      {title:"Hall of Fame (feat. will.i.am)",artist:"The Script",pts:0,voters:0,sub:"shaznasty"},
+      {title:"Last Resort",artist:"Papa Roach",pts:0,voters:0,sub:"Tyler Hundley"},
+      {title:"For The Love Of A Princess",artist:"James Horner",pts:0,voters:0,sub:"Adam Share"},
+      {title:"Birthday Song",artist:"2 Chainz",pts:0,voters:0,sub:"Vic Alonso"},
+      {title:"Casper's Lullaby",artist:"James Horner",pts:0,voters:0,sub:"Adam Share"},
+    ]
+  },
+  {
+    num:3, name:"TRL: The Golden Age",
+    desc:"Carson Daly was so sick 🤙 . Best jams from the TRL era",
+    songs:[
+      {title:"All The Small Things",artist:"blink-182",pts:8,voters:8,sub:"Aaron Heger"},
+      {title:"Genie In a Bottle",artist:"Christina Aguilera",pts:7,voters:7,sub:"shaznasty"},
+      {title:"Pretty Fly (For A White Guy)",artist:"The Offspring",pts:7,voters:7,sub:"Tej vill"},
+      {title:"The Real Slim Shady",artist:"Eminem",pts:7,voters:6,sub:"Tyler Hundley"},
+      {title:"My Name Is",artist:"Eminem",pts:6,voters:6,sub:"Steffen LoCascio"},
+      {title:"...Baby One More Time",artist:"Britney Spears",pts:6,voters:6,sub:"Steffen LoCascio"},
+      {title:"Thong Song",artist:"Sisqo",pts:6,voters:6,sub:"Kevin Potts"},
+      {title:"Ms. Jackson",artist:"Outkast",pts:5,voters:5,sub:"j.suastegui"},
+      {title:"I Want It That Way",artist:"Backstreet Boys",pts:5,voters:5,sub:"Tyler Hundley"},
+      {title:"All Star",artist:"Smash Mouth",pts:5,voters:5,sub:"Ben King"},
+      {title:"Bye Bye Bye",artist:"*NSYNC",pts:5,voters:5,sub:"Steffen LoCascio"},
+      {title:"You Get What You Give",artist:"New Radicals",pts:4,voters:4,sub:"Tej vill"},
+      {title:"Ride Wit Me",artist:"Nelly",pts:4,voters:4,sub:"Aaron Heger"},
+      {title:"Nookie",artist:"Limp Bizkit",pts:4,voters:4,sub:"Rick Rob"},
+      {title:"The Bad Touch",artist:"Bloodhound Gang",pts:4,voters:4,sub:"Kevin Potts"},
+      {title:"Stacy's Mom",artist:"Fountains Of Wayne",pts:3,voters:3,sub:"Ben King"},
+      {title:"Learn to Fly",artist:"Foo Fighters",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"Raise Up",artist:"Petey Pablo",pts:3,voters:3,sub:"Adam Share"},
+      {title:"Who Let The Dogs Out",artist:"Baha Men",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"Steal My Sunshine",artist:"LEN",pts:3,voters:3,sub:"Adam Share"},
+      {title:"Slide",artist:"The Goo Goo Dolls",pts:3,voters:3,sub:"Brendon Schmidt"},
+      {title:"Butterfly",artist:"Crazy Town",pts:3,voters:3,sub:"Brendon Schmidt"},
+      {title:"Fuck It (I Don't Want You Back)",artist:"Eamon",pts:2,voters:2,sub:"shaznasty"},
+      {title:"Oops!...I Did It Again",artist:"Britney Spears",pts:2,voters:2,sub:"Tyler Hundley"},
+      {title:"I'm Real - Murder Remix",artist:"Ja Rule",pts:2,voters:2,sub:"Aaron Heger"},
+      {title:"Summer Girls",artist:"LFO",pts:2,voters:2,sub:"Ben King"},
+      {title:"Bawitdaba",artist:"Kid Rock",pts:2,voters:2,sub:"shaznasty"},
+      {title:"Slow Jamz",artist:"Twista",pts:1,voters:1,sub:"j.suastegui"},
+      {title:"Intergalactic",artist:"Beastie Boys",pts:1,voters:1,sub:"Tej vill"},
+      {title:"Give Me Just One Night",artist:"98°",pts:1,voters:1,sub:"Brendon Schmidt"},
+      {title:"Hero",artist:"Enrique Iglesias",pts:1,voters:1,sub:"Vic Alonso"},
+      {title:"No Sex",artist:"Chris Rock",pts:1,voters:1,sub:"Adam Share"},
+      {title:"Cry Me a River",artist:"Justin Timberlake",pts:1,voters:1,sub:"Vic Alonso"},
+      {title:"Smells Like Teen Spirit",artist:"Nirvana",pts:0,voters:0,sub:"j.suastegui"},
+      {title:"Toxic",artist:"Britney Spears",pts:0,voters:0,sub:"Rick Rob"},
+      {title:"Hips Don't Lie",artist:"Shakira",pts:0,voters:0,sub:"Vic Alonso"},
+    ]
+  },
+  {
+    num:4, name:"Needle Drop: Iconic Movie Songs",
+    desc:"",
+    songs:[
+      {title:"Space Jam",artist:"Quad City DJ's",pts:9,voters:9,sub:"Aaron Heger"},
+      {title:"Scotty Doesn't Know",artist:"Lustra",pts:9,voters:9,sub:"Tyler Hundley"},
+      {title:"Lose Yourself",artist:"Eminem",pts:8,voters:8,sub:"Tyler Hundley"},
+      {title:"I Don't Want to Miss a Thing",artist:"Aerosmith",pts:8,voters:8,sub:"Aaron Heger"},
+      {title:"Don't You (Forget About Me)",artist:"Simple Minds",pts:7,voters:6,sub:"Steffen LoCascio"},
+      {title:"Danger Zone",artist:"Kenny Loggins",pts:6,voters:6,sub:"Aaron Heger"},
+      {title:"(I've Had) The Time Of My Life",artist:"Bill Medley",pts:6,voters:6,sub:"shaznasty"},
+      {title:"Stuck In The Middle With You",artist:"Stealers Wheel",pts:6,voters:6,sub:"Kevin Potts"},
+      {title:"What Is Love",artist:"Haddaway",pts:5,voters:5,sub:"cflaherty120"},
+      {title:"Tiny Dancer",artist:"Elton John",pts:5,voters:5,sub:"Vic Alonso"},
+      {title:"Eye of the Tiger",artist:"Survivor",pts:5,voters:5,sub:"shaznasty"},
+      {title:"See You Again (feat. Charlie Puth)",artist:"Wiz Khalifa",pts:4,voters:4,sub:"Steffen LoCascio"},
+      {title:"In The Air Tonight",artist:"Phil Collins",pts:4,voters:4,sub:"Brendon Schmidt"},
+      {title:"My Heart Will Go On",artist:"Céline Dion",pts:4,voters:4,sub:"Steffen LoCascio"},
+      {title:"What I've Done",artist:"Linkin Park",pts:4,voters:4,sub:"Rick Rob"},
+      {title:"Stayin Alive",artist:"Bee Gees",pts:4,voters:4,sub:"Vic Alonso"},
+      {title:"Fortunate Son",artist:"CCR",pts:4,voters:4,sub:"Rick Rob"},
+      {title:"Grow Old with You",artist:"Adam Sandler",pts:3,voters:3,sub:"Ben King"},
+      {title:"Mrs. Robinson",artist:"Simon & Garfunkel",pts:3,voters:3,sub:"shaznasty"},
+      {title:"Kiss from a Rose",artist:"Seal",pts:3,voters:3,sub:"Vic Alonso"},
+      {title:"No Time for Caution",artist:"Hans Zimmer",pts:3,voters:3,sub:"cflaherty120"},
+      {title:"Twist And Shout",artist:"The Beatles",pts:3,voters:3,sub:"Tej vill"},
+      {title:"Bitter Sweet Symphony",artist:"The Verve",pts:2,voters:2,sub:"Brendon Schmidt"},
+      {title:"Come and Get Your Love",artist:"Redbone",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"Life is a Highway",artist:"Rascal Flatts",pts:2,voters:2,sub:"Ben King"},
+      {title:"Over The Rainbow",artist:"Judy Garland",pts:2,voters:2,sub:"Kevin Potts"},
+      {title:"We Don't Talk About Bruno",artist:"Carolina Gaitán",pts:1,voters:1,sub:"j.suastegui"},
+      {title:"Sister Christian",artist:"Night Ranger",pts:1,voters:1,sub:"Brendon Schmidt"},
+      {title:"Oh Yeah",artist:"Yello",pts:1,voters:1,sub:"Adam Share"},
+      {title:"You're The Best",artist:"Joe Esposito",pts:1,voters:1,sub:"Ben King"},
+      {title:"We Are The Champions",artist:"Queen",pts:1,voters:1,sub:"Rick Rob"},
+      {title:"He Lives In You",artist:"Lebo M.",pts:1,voters:1,sub:"Adam Share"},
+      {title:"Footloose",artist:"Kenny Loggins",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"Let It Go",artist:"Idina Menzel",pts:1,voters:1,sub:"Kevin Potts"},
+      {title:"Scarface (Push It To The Limit)",artist:"Paul Engemann",pts:1,voters:1,sub:"Adam Share"},
+      {title:"All Star (Shrek)",artist:"Smash Mouth",pts:0,voters:0,sub:"cflaherty120"},
+      {title:"Can't Take My Eyes off You",artist:"Frankie Valli",pts:0,voters:0,sub:"Tej vill"},
+      {title:"Tubular Bells",artist:"Soundtrack Orchestra",pts:0,voters:0,sub:"Tej vill"},
+      {title:"World, Hold On",artist:"Bob Sinclar",pts:0,voters:0,sub:"j.suastegui"},
+    ]
+  },
+  {
+    num:5, name:"Mangina Mix 💋",
+    desc:"",
+    songs:[
+      {title:"Dancing On My Own",artist:"Robyn",pts:10,voters:9,sub:"shaznasty"},
+      {title:"Smalltown Boy",artist:"Bronski Beat",pts:9,voters:9,sub:"Aaron Heger"},
+      {title:"I Touch Myself",artist:"Divinyls",pts:7,voters:7,sub:"Ben King"},
+      {title:"It Feels So Good",artist:"Sonique",pts:6,voters:6,sub:"Brendon Schmidt"},
+      {title:"Enjoy the Silence",artist:"Depeche Mode",pts:6,voters:6,sub:"Brendon Schmidt"},
+      {title:"Baby Don't Go",artist:"Lead To Gold",pts:6,voters:6,sub:"Adam Share"},
+      {title:"I Feel Love",artist:"Donna Summer",pts:6,voters:6,sub:"j.suastegui"},
+      {title:"Sweet Dreams (Are Made Of This)",artist:"Marilyn Manson",pts:5,voters:5,sub:"Tej vill"},
+      {title:"Careless Whisper",artist:"George Michael",pts:5,voters:5,sub:"Vic Alonso"},
+      {title:"Sadeness",artist:"Enigma",pts:5,voters:5,sub:"Brendon Schmidt"},
+      {title:"Murder On The Dancefloor",artist:"Sophie Ellis-Bextor",pts:5,voters:5,sub:"Steffen LoCascio"},
+      {title:"Believe",artist:"Cher",pts:5,voters:5,sub:"Kevin Potts"},
+      {title:"Let's Have A Kiki",artist:"Scissor Sisters",pts:4,voters:4,sub:"Ben King"},
+      {title:"Tainted Love",artist:"Soft Cell",pts:4,voters:4,sub:"Steffen LoCascio"},
+      {title:"Blue Monday",artist:"New Order",pts:4,voters:4,sub:"j.suastegui"},
+      {title:"Diamond Veins - Kid Francescoli Remix",artist:"French 79",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"Goodbye Horses",artist:"Q Lazzarus",pts:3,voters:3,sub:"Tej vill"},
+      {title:"I'm Every Woman",artist:"Chaka Khan",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"Man! I Feel Like A Woman!",artist:"Shania Twain",pts:3,voters:3,sub:"Ben King"},
+      {title:"Lotion",artist:"Greenskeepers",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"I'm Too Sexy",artist:"Right Said Fred",pts:3,voters:3,sub:"cflaherty120"},
+      {title:"Wicked Game",artist:"Chris Isaak",pts:3,voters:3,sub:"Vic Alonso"},
+      {title:"Drug",artist:"Geordie Kieffer",pts:3,voters:3,sub:"Kevin Potts"},
+      {title:"Hungry Like the Wolf",artist:"Duran Duran",pts:2,voters:2,sub:"Tyler Hundley"},
+      {title:"I'm Every Woman",artist:"Whitney Houston",pts:2,voters:2,sub:"Steffen LoCascio"},
+      {title:"Always Something There to Remind Me",artist:"Naked Eyes",pts:2,voters:2,sub:"Tyler Hundley"},
+      {title:"Eternal Flame",artist:"The Bangles",pts:2,voters:2,sub:"shaznasty"},
+      {title:"Glory of Love",artist:"Peter Cetera",pts:2,voters:2,sub:"Adam Share"},
+      {title:"Somebody Else",artist:"The 1975",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"Where Is My Mind?",artist:"Pixies",pts:2,voters:2,sub:"cflaherty120"},
+      {title:"Safe - Joris Voorn Remix",artist:"Monkey Safari",pts:1,voters:1,sub:"Rick Rob"},
+      {title:"Heart Of Glass",artist:"Blondie",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"Lady - Hear Me Tonight",artist:"Modjo",pts:1,voters:1,sub:"shaznasty"},
+      {title:"Creep",artist:"Radiohead",pts:1,voters:1,sub:"Vic Alonso"},
+      {title:"Goodbye, Horses",artist:"Q Lazzarus & Garvey",pts:1,voters:1,sub:"cflaherty120"},
+      {title:"Paint It, Black",artist:"The Rolling Stones",pts:0,voters:0,sub:"Tej vill"},
+      {title:"I Follow Rivers - The Magician Remix",artist:"Lykke Li",pts:0,voters:0,sub:"Aaron Heger"},
+      {title:"Heaven",artist:"DJ Sammy",pts:0,voters:0,sub:"Adam Share"},
+      {title:"Hands Around My Throat",artist:"Death In Vegas",pts:0,voters:0,sub:"Rick Rob"},
+    ]
+  },
+  {
+    num:6, name:"Solo Night Driving",
+    desc:"",
+    songs:[
+      {title:"Midnight City",artist:"M83",pts:8,voters:8,sub:"Kevin Potts"},
+      {title:"Night Moves",artist:"Bob Seger",pts:8,voters:8,sub:"Tyler Hundley"},
+      {title:"Nightcall",artist:"Kavinsky",pts:8,voters:7,sub:"Kevin Potts"},
+      {title:"Ocean Drive",artist:"Duke Dumont",pts:7,voters:7,sub:"Vic Alonso"},
+      {title:"Something About Us",artist:"Daft Punk",pts:7,voters:7,sub:"Steffen LoCascio"},
+      {title:"Shooting Stars",artist:"Bag Raiders",pts:5,voters:5,sub:"Aaron Heger"},
+      {title:"Dreams",artist:"Fleetwood Mac",pts:5,voters:5,sub:"Steffen LoCascio"},
+      {title:"Riders on the Storm",artist:"The Doors",pts:5,voters:5,sub:"Vic Alonso"},
+      {title:"Under the Bridge",artist:"Red Hot Chili Peppers",pts:5,voters:5,sub:"Aaron Heger"},
+      {title:"Breathe (In the Air)",artist:"Pink Floyd",pts:5,voters:5,sub:"Brendon Schmidt"},
+      {title:"Closer",artist:"Kings of Leon",pts:4,voters:4,sub:"Tej vill"},
+      {title:"In The Air Tonight",artist:"Phil Collins",pts:4,voters:4,sub:"Steffen LoCascio"},
+      {title:"Fire for You",artist:"Cannons",pts:4,voters:4,sub:"Brendon Schmidt"},
+      {title:"Fast Car",artist:"Tracy Chapman",pts:4,voters:4,sub:"Ben King"},
+      {title:"Pursuit Of Happiness (Nightmare)",artist:"Kid Cudi",pts:4,voters:4,sub:"shaznasty"},
+      {title:"Days of Thunder",artist:"The Midnight",pts:3,voters:3,sub:"Adam Share"},
+      {title:"The Scientist",artist:"Coldplay",pts:3,voters:3,sub:"cflaherty120"},
+      {title:"Gravity - Live",artist:"John Mayer",pts:3,voters:3,sub:"Ben King"},
+      {title:"CHERIE",artist:"Darius",pts:3,voters:3,sub:"j.suastegui"},
+      {title:"Feel Good",artist:"Satin Jackets",pts:3,voters:3,sub:"j.suastegui"},
+      {title:"Use Somebody",artist:"Kings of Leon",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"Electric Feel",artist:"MGMT",pts:3,voters:3,sub:"Tyler Hundley"},
+      {title:"Stranglehold",artist:"Ted Nugent",pts:2,voters:2,sub:"Brendon Schmidt"},
+      {title:"No Place - Live from Joshua Tree",artist:"RÜFÜS DU SOL",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"Moondance",artist:"Van Morrison",pts:2,voters:2,sub:"Tej vill"},
+      {title:"Faded",artist:"ZHU",pts:2,voters:2,sub:"Kevin Potts"},
+      {title:"Seek Bromance",artist:"Tim Berg",pts:2,voters:2,sub:"cflaherty120"},
+      {title:"Northern Lights",artist:"Satin Jackets",pts:1,voters:1,sub:"Ben King"},
+      {title:"Dear Mr. Fantasy",artist:"Traffic",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"The Face",artist:"Kings of Leon",pts:1,voters:1,sub:"Tej vill"},
+      {title:"World Hold On",artist:"Bob Sinclar",pts:1,voters:1,sub:"shaznasty"},
+      {title:"One Headlight",artist:"The Wallflowers",pts:1,voters:1,sub:"cflaherty120"},
+      {title:"Maneater",artist:"Daryl Hall & John Oates",pts:1,voters:1,sub:"Vic Alonso"},
+      {title:"Ramblin' Man",artist:"Allman Brothers Band",pts:0,voters:0,sub:"shaznasty"},
+      {title:"Into The Night - Nero 1988 Remix",artist:"NERO",pts:0,voters:0,sub:"Adam Share"},
+      {title:"Through the Night",artist:"Grum",pts:0,voters:0,sub:"Adam Share"},
+    ]
+  },
+  {
+    num:7, name:"SigEp Safari",
+    desc:"",
+    songs:[
+      {title:"Whatever You Like",artist:"T.I.",pts:8,voters:8,sub:"j.suastegui"},
+      {title:"I'm On A Boat",artist:"The Lonely Island",pts:6,voters:6,sub:"Adam Share"},
+      {title:"Sex & Drugs & House",artist:"D-Devils",pts:6,voters:6,sub:"Ben King"},
+      {title:"Infinity 2008",artist:"Guru Josh Project",pts:6,voters:6,sub:"Adam Share"},
+      {title:"Cinema (feat. Gary Go)",artist:"Benny Benassi",pts:6,voters:6,sub:"Brendon Schmidt"},
+      {title:"Sexy Bitch (feat. Akon)",artist:"David Guetta",pts:6,voters:6,sub:"Kevin Potts"},
+      {title:"Feel So Close",artist:"Calvin Harris",pts:6,voters:6,sub:"Tyler Hundley"},
+      {title:"Beautiful",artist:"Akon",pts:6,voters:6,sub:"j.suastegui"},
+      {title:"Down",artist:"Jay Sean",pts:5,voters:5,sub:"j.suastegui"},
+      {title:"Wasted (feat. Plies)",artist:"Gucci Mane",pts:4,voters:4,sub:"Steffen LoCascio"},
+      {title:"Yes",artist:"LMFAO",pts:4,voters:4,sub:"Adam Share"},
+      {title:"Heads Will Roll - A-Trak Remix",artist:"Yeah Yeah Yeahs",pts:4,voters:4,sub:"Brendon Schmidt"},
+      {title:"Escape Me (feat. C.C. Sheffield)",artist:"Tiësto",pts:4,voters:4,sub:"Rick Rob"},
+      {title:"Promises - Skrillex & Nero Remix",artist:"NERO",pts:4,voters:4,sub:"Brendon Schmidt"},
+      {title:"Bulletproof",artist:"La Roux",pts:3,voters:3,sub:"Vic Alonso"},
+      {title:"Like A G6",artist:"Far East Movement",pts:3,voters:3,sub:"Tyler Hundley"},
+      {title:"We No Speak Americano",artist:"Yolanda Be Cool",pts:3,voters:3,sub:"Vic Alonso"},
+      {title:"We Found Love",artist:"Rihanna",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"Whatcha Say",artist:"Jason Derulo",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"Lollipop",artist:"Lil Wayne",pts:3,voters:3,sub:"shaznasty"},
+      {title:"Levels",artist:"Avicii",pts:2,voters:2,sub:"Steffen LoCascio"},
+      {title:"Party In The U.S.A.",artist:"Miley Cyrus",pts:2,voters:2,sub:"Vic Alonso"},
+      {title:"Barbra Streisand",artist:"Duck Sauce",pts:2,voters:2,sub:"Kevin Potts"},
+      {title:"Miami 2 Ibiza",artist:"Swedish House Mafia",pts:2,voters:2,sub:"cflaherty120"},
+      {title:"I'm Goin In",artist:"Drake",pts:1,voters:1,sub:"Steffen LoCascio"},
+      {title:"Pursuit Of Happiness - Steve Aoki Remix",artist:"Kid Cudi",pts:1,voters:1,sub:"Kevin Potts"},
+      {title:"Day 'N' Nite (nightmare)",artist:"Kid Cudi",pts:1,voters:1,sub:"Tyler Hundley"},
+      {title:"Love Lockdown",artist:"Kanye West",pts:1,voters:1,sub:"shaznasty"},
+      {title:"Disturbia",artist:"Rihanna",pts:1,voters:1,sub:"shaznasty"},
+      {title:"Welcome To The Jungle",artist:"Guns N' Roses",pts:1,voters:1,sub:"Ben King"},
+      {title:"All Of The Lights",artist:"Kanye West",pts:1,voters:1,sub:"Aaron Heger"},
+      {title:"Illmerica",artist:"Wolfgang Gartner",pts:1,voters:1,sub:"Rick Rob"},
+      {title:"Fade Into Darkness",artist:"Avicii",pts:1,voters:1,sub:"cflaherty120"},
+      {title:"Crave You",artist:"Flight Facilities",pts:0,voters:0,sub:"Rick Rob"},
+      {title:"Sandstorm",artist:"Darude",pts:0,voters:0,sub:"Ben King"},
+      {title:"Goodbye Horses",artist:"Q Lazzarus",pts:0,voters:0,sub:"cflaherty120"},
+    ]
+  },
+];
+
+// =====================================================================
+// COMPUTED DATA
+// =====================================================================
+
+// Per-player total scores
+function computeScores() {
+  const scores = {};
+  const meta = {};
+  PLAYERS.forEach(p => { scores[p] = 0; meta[p] = { songs:[], voters:0, rounds:0 }; });
+
+  ROUNDS.forEach(r => {
+    const roundPlayers = new Set();
+    r.songs.forEach(s => {
+      scores[s.sub] += s.pts;
+      meta[s.sub].songs.push({...s, round:r.num, roundName:r.name});
+      meta[s.sub].voters += s.voters;
+      roundPlayers.add(s.sub);
+    });
+    roundPlayers.forEach(p => meta[p].rounds++);
+  });
+
+  const ranked = PLAYERS
+    .map(p => ({ name:p, pts:scores[p], ...meta[p] }))
+    .sort((a,b) => b.pts - a.pts || b.voters - a.voters);
+
+  let rank=1;
+  for(let i=0;i<ranked.length;i++){
+    if(i>0 && ranked[i].pts===ranked[i-1].pts) ranked[i].rank=ranked[i-1].rank;
+    else ranked[i].rank=rank;
+    rank++;
+  }
+  return ranked;
+}
+
+// Vote affinity: who each player voted for most / least
+// We infer this from points: a song's voters are the people who voted.
+// Since we only have totals not individual ballots, we approximate by
+// showing each player's biggest point-earners submitted by others
+// (i.e. songs they likely contributed to). Without individual vote data
+// we use: which submitters' songs got the most points in rounds where
+// a given player submitted (as a proxy for who they align with).
+//
+// Better approach: use pts/voters ratio × voter count as a proxy.
+// We know each song's voters count. We'll compute "apparent support score"
+// per submitter pair based on correlation of high-scoring songs.
+// Since we don't have individual ballots, we'll do a simpler stat:
+// "Rounds where Player A's songs performed best when Player B also submitted"
+// 
+// SIMPLIFIED: Show who each player's co-submitted songs (other players 
+// in same round) had the most success alongside their songs.
+// Actually - let's just show the most interesting computable stat:
+// Per round, rank each player's songs. Then see which other player's
+// songs ranked similarly (correlation = fan). And inverse for critic.
+// 
+// PRACTICAL: Show "Most votes given" as: which other player's songs
+// scored highest in rounds where this player ALSO had high scores
+// (i.e. taste alignment). Label as "Shares taste with".
+
+function computeAffinity() {
+  // For each player, compute avg pts of songs submitted by each OTHER player,
+  // weighted by rounds where both participated.
+  const affinity = {};
+  PLAYERS.forEach(p => { affinity[p] = {}; PLAYERS.forEach(q => { if(p!==q) affinity[p][q]={pts:0,count:0}; }); });
+
+  ROUNDS.forEach(r => {
+    const participants = [...new Set(r.songs.map(s=>s.sub))];
+    // For each participant, look at other participants' song scores
+    participants.forEach(p => {
+      participants.forEach(q => {
+        if(p===q) return;
+        const qSongs = r.songs.filter(s=>s.sub===q);
+        qSongs.forEach(s => {
+          affinity[p][q].pts += s.pts;
+          affinity[p][q].count++;
+        });
+      });
+    });
+  });
+
+  // For each player, find who they "support most" (highest avg pts for others' songs)
+  // and "support least"
+  const result = {};
+  PLAYERS.forEach(p => {
+    const entries = Object.entries(affinity[p])
+      .filter(([q,d]) => d.count > 0)
+      .map(([q,d]) => ({ name:q, avg: d.pts/d.count, total:d.pts }))
+      .sort((a,b) => b.avg - a.avg);
+    result[p] = {
+      biggestFan: entries[0] || null,
+      biggestCritic: entries[entries.length-1] || null,
+      all: entries
+    };
+  });
+  return result;
+}
+
+// =====================================================================
+// RENDER STANDINGS
+// =====================================================================
+function renderStandings() {
+  const ranked = computeScores();
+  const maxPts = ranked[0].pts;
+
+  // Podium top 5
+  const podiumHTML = ranked.slice(0,5).map(p => {
+    const rc = p.rank===1?'gold':p.rank===2?'silver':p.rank===3?'bronze':'';
+    const suffix = p.rank===1?'st':p.rank===2?'nd':p.rank===3?'rd':'th';
+    return `<div class="podium-row">
+      <div class="podium-rank ${rc}">${p.rank}${suffix}</div>
+      <div class="podium-name">${p.name}</div>
+      <div class="podium-bar-wrap"><div class="podium-bar" style="width:${Math.round(p.pts/maxPts*100)}%"></div></div>
+      <div class="podium-pts">${p.pts} pts</div>
+    </div>`;
+  }).join('');
+  document.getElementById('podium-rows').innerHTML = podiumHTML;
+
+  // Season stats mini
+  const totalSongs = ROUNDS.reduce((a,r)=>a+r.songs.length,0);
+  const allPts = ROUNDS.flatMap(r=>r.songs.map(s=>s.pts));
+  const highestPts = Math.max(...allPts);
+  const highestSong = ROUNDS.flatMap(r=>r.songs).find(s=>s.pts===highestPts);
+  const zeroSongs = allPts.filter(p=>p===0).length;
+  document.getElementById('season-stats-mini').innerHTML = `
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Total songs submitted</div><div class="podium-pts">${totalSongs}</div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Rounds completed</div><div class="podium-pts">7 / 10</div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Highest single score</div><div class="podium-pts">${highestPts} pts</div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Best song overall</div><div class="podium-pts" style="font-size:10px;max-width:160px;text-align:right;line-height:1.4">${highestSong.title}</div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Songs with 0 votes</div><div class="podium-pts" style="color:var(--muted)">${zeroSongs}</div></div>
+  `;
+
+  // Full leaderboard
+  document.getElementById('lb-rows').innerHTML = ranked.map(p => {
+    const rc = p.rank===1?'gold':p.rank===2?'silver':p.rank===3?'bronze':'';
+    const suffix = p.rank===1?'st':p.rank===2?'nd':p.rank===3?'rd':'th';
+    return `<div class="lb-row">
+      <div class="lb-pos ${rc}">${p.rank}${suffix}</div>
+      <div class="lb-name">${p.name}</div>
+      <div class="lb-rounds">${p.rounds}</div>
+      <div class="lb-voters">${p.voters}</div>
+      <div class="lb-pts ${p.pts===0?'zero':''}">${p.pts}</div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// RENDER ROUNDS — summary view
+// =====================================================================
+function renderRounds() {
+  const sel = document.getElementById('round-selector');
+  sel.innerHTML = ROUNDS.map((r,i) =>
+    `<button class="round-btn ${i===0?'active':''}" onclick="selectRound(${i},this)">R${r.num}: ${r.name}</button>`
+  ).join('');
+  showRound(0);
+}
+
+function selectRound(idx, btn) {
+  document.querySelectorAll('.round-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  showRound(idx);
+}
+
+function showRound(idx) {
+  const r = ROUNDS[idx];
+  const sorted = [...r.songs].sort((a,b)=>b.pts-a.pts||b.voters-a.voters);
+
+  // Per-player totals this round
+  const playerTotals = {};
+  PLAYERS.forEach(p=>playerTotals[p]=0);
+  r.songs.forEach(s=>playerTotals[s.sub]+=s.pts);
+
+  // Only players who submitted
+  const participants = Object.entries(playerTotals)
+    .filter(([,pts])=>pts>0 || r.songs.some(s=>s.sub===Object.keys(playerTotals).find(k=>k===s.sub)))
+    .map(([name,pts])=>({name,pts}));
+  // Include anyone who submitted (even 0 pts total)
+  const submitters = [...new Set(r.songs.map(s=>s.sub))];
+  const playerRows = submitters
+    .map(p=>({name:p, pts:playerTotals[p]}))
+    .sort((a,b)=>b.pts-a.pts);
+  const maxPts = Math.max(...playerRows.map(p=>p.pts), 1);
+  const winner = playerRows[0];
+
+  // Top 3 songs
+  const top3 = sorted.slice(0,3);
+  const medals = ['🥇','🥈','🥉'];
+
+  // Round stats
+  const totalPts = r.songs.reduce((a,s)=>a+s.pts,0);
+  const totalVoters = r.songs.reduce((a,s)=>a+s.voters,0);
+  const zeroVoteSongs = r.songs.filter(s=>s.pts===0).length;
+  const avgPts = (totalPts/r.songs.length).toFixed(1);
+  const mostVotedSong = sorted[0];
+  const highestVoters = Math.max(...r.songs.map(s=>s.voters));
+
+  // Flop of the round — lowest pts submitted by a player who also had high pts
+  // (more interesting than just 0 votes — pick worst song from best player)
+  const worstFromBest = r.songs
+    .filter(s=>s.sub===winner.name)
+    .sort((a,b)=>a.pts-b.pts)[0];
+
+  // Mean and median player scores this round
+  const roundScoreValues = playerRows.map(p=>p.pts).sort((a,b)=>a-b);
+  const meanScore = (roundScoreValues.reduce((a,b)=>a+b,0)/roundScoreValues.length).toFixed(1);
+  const mid = Math.floor(roundScoreValues.length/2);
+  const medianScore = roundScoreValues.length%2!==0
+    ? roundScoreValues[mid]
+    : ((roundScoreValues[mid-1]+roundScoreValues[mid])/2).toFixed(1);
+
+  document.getElementById('round-summary').innerHTML = `
+    <div class="round-summary-header">
+      <h2 class="round-summary-title">Round ${r.num} — ${r.name}</h2>
+      ${r.desc ? `<p class="round-summary-desc">${r.desc}</p>` : ''}
+    </div>
+
+    <div class="round-stats-row">
+      <div class="round-stat-cell">
+        <div class="round-stat-label">Round Winner</div>
+        <div class="round-stat-value" style="color:#FFD700">${winner.name}</div>
+        <div class="round-stat-sub">${winner.pts} pts this round</div>
+      </div>
+      <div class="round-stat-cell">
+        <div class="round-stat-label">Winner's Score</div>
+        <div class="round-stat-value" style="color:#FFD700">${winner.pts}</div>
+        <div class="round-stat-sub">points this round</div>
+      </div>
+      <div class="round-stat-cell">
+        <div class="round-stat-label">Median Score / Player</div>
+        <div class="round-stat-value">${medianScore}</div>
+        <div class="round-stat-sub">across ${playerRows.length} players</div>
+      </div>
+      <div class="round-stat-cell">
+        <div class="round-stat-label">Zero-Vote Flops</div>
+        <div class="round-stat-value" style="color:${zeroVoteSongs>0?'#e05353':'var(--green)'}">${zeroVoteSongs}</div>
+        <div class="round-stat-sub">${zeroVoteSongs===0?'Everyone scored!':'song'+(zeroVoteSongs!==1?'s':'')+' got nothing'}</div>
+      </div>
+    </div>
+
+    <div class="round-summary-grid">
+      <div class="round-card">
+        <div class="round-card-title">🏆 Top 3 Songs</div>
+        <div class="top3-list">
+          ${top3.map((s,i)=>`
+            <div class="top3-song">
+              <div class="top3-medal">${medals[i]}</div>
+              <div class="top3-info">
+                <div class="top3-title">${s.title}</div>
+                <div class="top3-artist">${s.artist}</div>
+                <div class="top3-sub">↳ ${s.sub} · ${s.voters} voter${s.voters!==1?'s':''}</div>
+              </div>
+              <div class="top3-pts">${s.pts}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="round-card">
+        <div class="round-card-title">📊 Points by Player</div>
+        <div class="player-scores-list">
+          ${playerRows.map(p=>`
+            <div class="player-score-row">
+              <div class="pscore-name">${p.name}</div>
+              <div class="pscore-bar-wrap"><div class="pscore-bar ${p.pts===winner.pts?'winner':''}" style="width:${Math.round(p.pts/maxPts*100)}%"></div></div>
+              <div class="pscore-val ${p.pts===winner.pts?'winner':p.pts===0?'zero':''}">${p.pts}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="round-summary-grid">
+      <div class="round-card">
+        <div class="round-card-title">🔥 Most Popular Song</div>
+        <div class="top3-list">
+          <div class="top3-song">
+            <div class="top3-medal">👏</div>
+            <div class="top3-info">
+              <div class="top3-title">${mostVotedSong.title}</div>
+              <div class="top3-artist">${mostVotedSong.artist}</div>
+              <div class="top3-sub">↳ ${mostVotedSong.sub}</div>
+            </div>
+            <div class="top3-pts" style="font-size:13px;line-height:1.5;text-align:right">
+              <span style="display:block;font-size:20px">${mostVotedSong.voters}</span>
+              <span style="color:var(--muted);font-size:10px">voters</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="round-card">
+        <div class="round-card-title">😬 Biggest Miss This Round</div>
+        <div class="top3-list">
+          ${(() => {
+            // find the song with most votes that scored lowest, or just lowest pts with >0 voters
+            const missable = [...r.songs].filter(s=>s.pts>0).sort((a,b)=>a.pts-b.pts);
+            const miss = missable[0] || sorted[sorted.length-1];
+            const zeroSongs = r.songs.filter(s=>s.pts===0);
+            if(zeroSongs.length>0) {
+              return `<div style="padding:14px 20px;color:var(--muted);font-size:13px;">
+                <div style="color:var(--text);font-weight:700;margin-bottom:4px;">${zeroSongs.length} song${zeroSongs.length!==1?'s':''} got 0 votes</div>
+                ${zeroSongs.map(s=>`<div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px;">↳ ${s.title} — ${s.sub}</div>`).join('')}
+              </div>`;
+            }
+            return `<div class="top3-song">
+              <div class="top3-medal">😬</div>
+              <div class="top3-info">
+                <div class="top3-title">${miss.title}</div>
+                <div class="top3-artist">${miss.artist}</div>
+                <div class="top3-sub">↳ ${miss.sub} · lowest score this round</div>
+              </div>
+              <div class="top3-pts" style="color:#e05353">${miss.pts}</div>
+            </div>`;
+          })()}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// =====================================================================
+// RENDER FUN STATS
+// =====================================================================
+function renderStats() {
+  const ranked = computeScores();
+  const allSongs = ROUNDS.flatMap(r=>r.songs);
+
+  // Compute round winners
+  const roundWins = {};
+  PLAYERS.forEach(p=>roundWins[p]=0);
+  ROUNDS.forEach(r => {
+    const perPlayer = {};
+    r.songs.forEach(s => { perPlayer[s.sub]=(perPlayer[s.sub]||0)+s.pts; });
+    const maxPts = Math.max(...Object.values(perPlayer));
+    Object.entries(perPlayer).forEach(([p,pts])=>{ if(pts===maxPts) roundWins[p]++; });
+  });
+  const mostWins = Object.entries(roundWins).sort((a,b)=>b[1]-a[1])[0];
+
+  // Most consistent (lowest std dev of round scores)
+  function roundScore(player, round) {
+    return round.songs.filter(s=>s.sub===player).reduce((a,s)=>a+s.pts,0);
+  }
+  const consistency = PLAYERS.map(p => {
+    const scores = ROUNDS.map(r=>roundScore(p,r)).filter(s=>s>0);
+    if(scores.length<2) return {name:p, std:999};
+    const mean = scores.reduce((a,b)=>a+b,0)/scores.length;
+    const std = Math.sqrt(scores.map(s=>(s-mean)**2).reduce((a,b)=>a+b,0)/scores.length);
+    return {name:p, std, mean};
+  }).filter(x=>x.std<999).sort((a,b)=>a.std-b.std);
+
+  // Best single-round score by one player
+  let bestRoundScore = 0, bestRoundPlayer = '', bestRoundNum = 0, bestRoundName = '';
+  ROUNDS.forEach(r => {
+    const perPlayer = {};
+    r.songs.forEach(s => { perPlayer[s.sub]=(perPlayer[s.sub]||0)+s.pts; });
+    Object.entries(perPlayer).forEach(([p,pts]) => {
+      if(pts > bestRoundScore) { bestRoundScore=pts; bestRoundPlayer=p; bestRoundNum=r.num; bestRoundName=r.name; }
+    });
+  });
+
+  // Best single song
+  const bestSong = [...allSongs].sort((a,b)=>b.pts-a.pts)[0];
+  // Most flops (0 votes)
+  const flops = {};
+  PLAYERS.forEach(p=>flops[p]=0);
+  allSongs.forEach(s=>{ if(s.pts===0) flops[s.sub]++; });
+  const mostFlops = Object.entries(flops).sort((a,b)=>b[1]-a[1])[0];
+
+  // Total 0-vote songs
+  const zeroCount = allSongs.filter(s=>s.pts===0).length;
+
+  const statsData = [
+    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 7 rounds`,detail:''},
+    {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`},
+    {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week'},
+    {emoji:'🎯',label:'Most Consistent',value:consistency[0]?.name||'—',sub:`Avg ${consistency[0]?.mean?.toFixed(1)} pts/round`,detail:'Lowest score variance across rounds'},
+    {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`},
+    {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`},
+    {emoji:'🔢',label:'Rounds Completed',value:'7 / 10',sub:'3 rounds remaining',detail:''},
+    {emoji:'😴',label:'Sat Out Round 1',value:'cflaherty120 & Adam Share',sub:'Both joined from Round 2',detail:''},
+  ];
+
+  document.getElementById('stats-grid').innerHTML = statsData.map(s =>
+    `<div class="stat-card" data-emoji="${s.emoji}">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value">${s.value}</div>
+      ${s.sub?`<div class="stat-sub">${s.sub}</div>`:''}
+      ${s.detail?`<div class="stat-detail">${s.detail}</div>`:''}
+    </div>`
+  ).join('');
+
+  // Taste table
+  const byPlayer = {};
+  PLAYERS.forEach(p=>byPlayer[p]=[]);
+  ROUNDS.forEach(r=>r.songs.forEach(s=>byPlayer[s.sub].push({...s,round:r.num})));
+  const sortedPlayers = [...PLAYERS].sort((a,b)=>{
+    const aTotal = byPlayer[a].reduce((x,s)=>x+s.pts,0);
+    const bTotal = byPlayer[b].reduce((x,s)=>x+s.pts,0);
+    return bTotal-aTotal;
+  });
+  document.getElementById('taste-table').innerHTML = sortedPlayers.map(p => {
+    const songs = byPlayer[p];
+    const total = songs.reduce((x,s)=>x+s.pts,0);
+    const pills = songs.map(s=>
+      `<span class="taste-song-pill" title="R${s.round}: ${s.pts}pts">${s.title.slice(0,22)}${s.title.length>22?'…':''} <span style="color:var(--green)">${s.pts}</span></span>`
+    ).join('');
+    return `<div class="taste-row">
+      <div class="taste-name">${p}</div>
+      <div class="taste-songs">${pills||'<span style="color:var(--muted);font-size:11px;font-family:\'Space Mono\',monospace">No submissions</span>'}</div>
+      <div class="taste-score">${total}</div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// NAV
+// =====================================================================
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+renderStandings();
+renderRounds();
+renderStats();
+</script>
+</body>
+</html>
