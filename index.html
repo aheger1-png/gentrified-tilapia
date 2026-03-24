@@ -304,6 +304,7 @@
   <button class="nav-tab" onclick="showPanel('trajectory',this)">Season Trajectory</button>
   <button class="nav-tab" onclick="showPanel('rounds',this)">Round Results</button>
   <button class="nav-tab" onclick="showPanel('stats',this)">Fun Stats</button>
+  <button class="nav-tab" onclick="showPanel('submissions',this)">Player Submissions</button>
 </nav>
 </div>
 
@@ -356,6 +357,10 @@
       <div></div><div>Song</div><div style="text-align:center">Submitter</div><div style="text-align:center">Round</div><div style="text-align:right">Pts</div>
     </div>
     <div class="song-season-list" id="song-season-list"></div>
+  </section>
+
+  <!-- ===== PLAYER SUBMISSIONS ===== -->
+  <section class="panel" id="panel-submissions">
     <div class="section-title">Player Submissions — all rounds</div>
     <div class="taste-table" id="taste-table"></div>
   </section>
@@ -697,7 +702,7 @@ PLAYERS.forEach((p,i) => playerColor[p] = PLAYER_COLORS[i % PLAYER_COLORS.length
 // TRAJECTORY CHART
 // =====================================================================
 function renderTrajectory() {
-  const svg = document.getElementById('trajectory-svg');
+  const chartWrap = document.querySelector('.chart-wrap');
   const legend = document.getElementById('chart-legend');
 
   // Build cumulative scores per player per round
@@ -713,8 +718,16 @@ function renderTrajectory() {
     });
   });
 
+  // Per-round scores (not cumulative) for tooltip
+  const roundScores = ROUNDS.map(r => {
+    const perPlayer = {};
+    PLAYERS.forEach(p => perPlayer[p] = 0);
+    r.songs.forEach(s => perPlayer[s.sub] += s.pts);
+    return perPlayer;
+  });
+
   const W = 900, H = 380;
-  const padL = 48, padR = 24, padT = 16, padB = 40;
+  const padL = 48, padR = 80, padT = 16, padB = 40;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
   const numRounds = ROUNDS.length;
@@ -723,7 +736,11 @@ function renderTrajectory() {
   const xScale = i => padL + (i / numRounds) * chartW;
   const yScale = v => padT + chartH - (v / (maxVal * 1.05)) * chartH;
 
-  let svgHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;overflow:visible">`;
+  const dimmedPlayers = new Set(
+    JSON.parse(localStorage.getItem('dimmedPlayers') || '[]')
+  );
+
+  let svgHTML = `<svg id="trajectory-svg-el" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;overflow:visible;display:block;">`;
 
   // Grid lines
   const gridLines = 5;
@@ -734,7 +751,7 @@ function renderTrajectory() {
     svgHTML += `<text x="${padL - 6}" y="${y + 4}" text-anchor="end" fill="#555" font-size="10" font-family="Space Mono,monospace">${val}</text>`;
   }
 
-  // X axis labels
+  // X axis labels + vertical round lines
   for (let i = 0; i <= numRounds; i++) {
     const x = xScale(i);
     const label = i === 0 ? 'Start' : `R${i}`;
@@ -744,30 +761,141 @@ function renderTrajectory() {
     }
   }
 
-  // Lines per player (dimmed ones drawn first, active on top)
-  const dimmedPlayers = new Set(
-    JSON.parse(localStorage.getItem('dimmedPlayers') || '[]')
-  );
-
-  // Draw lines
+  // Player lines
   PLAYERS.forEach(p => {
     const pts = cumulative[p];
     const color = playerColor[p];
     const isDimmed = dimmedPlayers.has(p);
     const points = pts.map((v, i) => `${xScale(i)},${yScale(v)}`).join(' ');
     svgHTML += `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="${isDimmed ? 1 : 2.5}" opacity="${isDimmed ? 0.15 : 0.9}" stroke-linejoin="round" stroke-linecap="round"/>`;
-
-    // End dot + label
     if (!isDimmed) {
       const finalX = xScale(numRounds);
       const finalY = yScale(pts[numRounds]);
       svgHTML += `<circle cx="${finalX}" cy="${finalY}" r="4" fill="${color}"/>`;
-      svgHTML += `<text x="${finalX + 6}" y="${finalY + 4}" fill="${color}" font-size="9" font-family="Space Mono,monospace">${p.split(' ')[0]}</text>`;
+      svgHTML += `<text x="${finalX + 8}" y="${finalY + 4}" fill="${color}" font-size="9" font-family="Space Mono,monospace">${p.split(' ')[0]}</text>`;
     }
   });
 
+  // Hover line (hidden by default)
+  svgHTML += `<line id="hover-line" x1="0" y1="${padT}" x2="0" y2="${padT + chartH}" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4,3" visibility="hidden"/>`;
+
+  // Hover dots per player (hidden by default)
+  PLAYERS.forEach(p => {
+    const color = playerColor[p];
+    svgHTML += `<circle id="hdot-${p.replace(/[^a-z0-9]/gi,'_')}" cx="0" cy="0" r="5" fill="${color}" stroke="#0a0a0a" stroke-width="2" visibility="hidden"/>`;
+  });
+
+  // Invisible hit area over chart for mouse events
+  svgHTML += `<rect id="chart-hit-area" x="${padL}" y="${padT}" width="${chartW}" height="${chartH}" fill="transparent" style="cursor:crosshair;"/>`;
+
   svgHTML += `</svg>`;
-  svg.outerHTML = svgHTML;
+
+  // Replace existing SVG
+  const existing = document.getElementById('trajectory-svg-el') || document.getElementById('trajectory-svg');
+  if (existing) existing.outerHTML = svgHTML;
+  else document.querySelector('.chart-wrap').insertAdjacentHTML('afterbegin', svgHTML);
+
+  // Tooltip element
+  let tooltip = document.getElementById('chart-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'chart-tooltip';
+    tooltip.style.cssText = `
+      position:absolute; background:#1a1a1a; border:1px solid #333;
+      padding:12px 14px; pointer-events:none; z-index:100;
+      font-family:'Syne',sans-serif; min-width:180px;
+      display:none; box-shadow:0 8px 32px rgba(0,0,0,0.5);
+    `;
+    document.querySelector('.chart-wrap').style.position = 'relative';
+    document.querySelector('.chart-wrap').appendChild(tooltip);
+  }
+
+  // Mouse/touch interaction
+  function handleHover(clientX, clientY) {
+    const svgEl = document.getElementById('trajectory-svg-el');
+    if (!svgEl) return;
+    const rect = svgEl.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const relX = (clientX - rect.left) * scaleX;
+
+    // Find nearest round index (1..numRounds)
+    const rawIndex = (relX - padL) / chartW * numRounds;
+    const roundIdx = Math.max(1, Math.min(numRounds, Math.round(rawIndex)));
+
+    if (rawIndex < 0 || rawIndex > numRounds) {
+      hideTooltip(); return;
+    }
+
+    const x = xScale(roundIdx);
+
+    // Update hover line
+    const hline = document.getElementById('hover-line');
+    if (hline) { hline.setAttribute('x1', x); hline.setAttribute('x2', x); hline.setAttribute('visibility', 'visible'); }
+
+    // Update dots
+    PLAYERS.forEach(p => {
+      const dot = document.getElementById('hdot-' + p.replace(/[^a-z0-9]/gi,'_'));
+      if (!dot) return;
+      if (dimmedPlayers.has(p)) { dot.setAttribute('visibility','hidden'); return; }
+      const yVal = yScale(cumulative[p][roundIdx]);
+      dot.setAttribute('cx', x);
+      dot.setAttribute('cy', yVal);
+      dot.setAttribute('visibility', 'visible');
+    });
+
+    // Build tooltip content — top 3 by cumulative score at this round
+    const r = ROUNDS[roundIdx - 1];
+    const standings = PLAYERS
+      .map(p => ({ name: p, cumPts: cumulative[p][roundIdx], roundPts: roundScores[roundIdx-1][p] }))
+      .sort((a, b) => b.cumPts - a.cumPts)
+      .slice(0, 3);
+
+    const medals = ['🥇','🥈','🥉'];
+    tooltip.innerHTML = `
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:10px;">After Round ${roundIdx} — ${r.name}</div>
+      ${standings.map((p, i) => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;${i===2?'margin-bottom:0':''}">
+          <span style="font-size:14px">${medals[i]}</span>
+          <div style="width:8px;height:8px;border-radius:50%;background:${playerColor[p.name]};flex-shrink:0"></div>
+          <span style="font-size:13px;font-weight:700;flex:1">${p.name}</span>
+          <span style="font-family:'Space Mono',monospace;font-size:12px;color:${playerColor[p.name]}">${p.cumPts}</span>
+        </div>`).join('')}
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid #222;font-family:'Space Mono',monospace;font-size:9px;color:#555;">
+        This round: ${standings.map(p => `${p.name.split(' ')[0]} +${p.roundPts}`).join(' · ')}
+      </div>
+    `;
+
+    // Position tooltip — keep it within the chart wrap
+    const wrapRect = document.querySelector('.chart-wrap').getBoundingClientRect();
+    const svgPct = (x / W);
+    const tooltipLeft = svgPct * rect.width + rect.left - wrapRect.left;
+    const tipW = 220;
+    const leftPos = Math.min(Math.max(tooltipLeft - tipW/2, 4), wrapRect.width - tipW - 4);
+    tooltip.style.left = leftPos + 'px';
+    tooltip.style.top = '8px';
+    tooltip.style.display = 'block';
+  }
+
+  function hideTooltip() {
+    const tooltip = document.getElementById('chart-tooltip');
+    if (tooltip) tooltip.style.display = 'none';
+    const hline = document.getElementById('hover-line');
+    if (hline) hline.setAttribute('visibility', 'hidden');
+    PLAYERS.forEach(p => {
+      const dot = document.getElementById('hdot-' + p.replace(/[^a-z0-9]/gi,'_'));
+      if (dot) dot.setAttribute('visibility','hidden');
+    });
+  }
+
+  // Attach events to hit area after DOM updates
+  requestAnimationFrame(() => {
+    const hitArea = document.getElementById('chart-hit-area');
+    if (!hitArea) return;
+    hitArea.addEventListener('mousemove', e => handleHover(e.clientX, e.clientY));
+    hitArea.addEventListener('mouseleave', hideTooltip);
+    hitArea.addEventListener('touchmove', e => { e.preventDefault(); handleHover(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+    hitArea.addEventListener('touchend', hideTooltip);
+  });
 
   // Legend
   legend.innerHTML = PLAYERS.map(p => `
@@ -1017,11 +1145,22 @@ function renderStandings() {
   const highestPts = Math.max(...allPts);
   const highestSong = ROUNDS.flatMap(r=>r.songs).find(s=>s.pts===highestPts);
   const zeroSongs = allPts.filter(p=>p===0).length;
+
+  // Best single-round player score for standings card
+  let standingsBestRoundScore = 0, standingsBestRoundPlayer = '';
+  ROUNDS.forEach(r => {
+    const perPlayer = {};
+    r.songs.forEach(s => { perPlayer[s.sub]=(perPlayer[s.sub]||0)+s.pts; });
+    Object.entries(perPlayer).forEach(([p,pts]) => {
+      if(pts > standingsBestRoundScore) { standingsBestRoundScore=pts; standingsBestRoundPlayer=p; }
+    });
+  });
+
   document.getElementById('season-stats-mini').innerHTML = `
     <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Total songs submitted</div><div class="podium-pts">${totalSongs}</div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Rounds completed</div><div class="podium-pts">7 / 10</div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Highest single score</div><div class="podium-pts">${highestPts} pts</div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Best song overall</div><div class="podium-pts" style="font-size:10px;max-width:160px;text-align:right;line-height:1.4">${highestSong.title}</div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Most pts in a single round</div><div class="podium-pts">${standingsBestRoundScore} <span style="font-size:10px;color:var(--muted)">${standingsBestRoundPlayer}</span></div></div>
+    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Highest single song score</div><div class="podium-pts">${highestPts} pts</div></div>
+    <div class="podium-row" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="font-size:11px;color:var(--muted)">↳ best song</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green);line-height:1.4">${highestSong.title}</div><div style="font-size:11px;color:var(--dimmed)">${highestSong.artist} · ${highestSong.sub}</div></div>
     <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Songs with 0 votes</div><div class="podium-pts" style="color:var(--muted)">${zeroSongs}</div></div>
   `;
 
@@ -1229,18 +1368,6 @@ function renderStats() {
   });
   const mostWins = Object.entries(roundWins).sort((a,b)=>b[1]-a[1])[0];
 
-  // Most consistent (lowest std dev of round scores)
-  function roundScore(player, round) {
-    return round.songs.filter(s=>s.sub===player).reduce((a,s)=>a+s.pts,0);
-  }
-  const consistency = PLAYERS.map(p => {
-    const scores = ROUNDS.map(r=>roundScore(p,r)).filter(s=>s>0);
-    if(scores.length<2) return {name:p, std:999};
-    const mean = scores.reduce((a,b)=>a+b,0)/scores.length;
-    const std = Math.sqrt(scores.map(s=>(s-mean)**2).reduce((a,b)=>a+b,0)/scores.length);
-    return {name:p, std, mean};
-  }).filter(x=>x.std<999).sort((a,b)=>a.std-b.std);
-
   // Best single-round score by one player
   let bestRoundScore = 0, bestRoundPlayer = '', bestRoundNum = 0, bestRoundName = '';
   ROUNDS.forEach(r => {
@@ -1266,10 +1393,8 @@ function renderStats() {
     {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 7 rounds`,detail:''},
     {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`},
     {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week'},
-    {emoji:'🎯',label:'Most Consistent',value:consistency[0]?.name||'—',sub:`Avg ${consistency[0]?.mean?.toFixed(1)} pts/round`,detail:'Lowest score variance across rounds'},
     {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`},
     {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`},
-    {emoji:'🔢',label:'Rounds Completed',value:'7 / 10',sub:'3 rounds remaining',detail:''},
     {emoji:'😴',label:'Sat Out Round 1',value:'cflaherty120 & Adam Share',sub:'Both joined from Round 2',detail:''},
   ];
 
