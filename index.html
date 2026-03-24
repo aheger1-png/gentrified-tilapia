@@ -154,6 +154,65 @@
 
   @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
   .animate{animation:fadeUp 0.35s ease both;}
+
+  /* TRAJECTORY CHART */
+  .chart-wrap { background:var(--surface); border:1px solid var(--border); padding:32px 24px 24px; margin-bottom:32px; position:relative; }
+  .chart-title { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:24px; }
+  .chart-svg { width:100%; overflow:visible; }
+  .chart-legend { display:flex; flex-wrap:wrap; gap:12px 20px; margin-top:16px; }
+  .legend-item { display:flex; align-items:center; gap:6px; cursor:pointer; opacity:1; transition:opacity 0.2s; }
+  .legend-item.dimmed { opacity:0.25; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .legend-label { font-family:'Space Mono',monospace; font-size:10px; color:var(--dimmed); }
+
+  /* PLAYER PROFILE MODAL */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); width:100%; max-width:640px; max-height:90vh; overflow-y:auto; position:relative; animation:fadeUp 0.25s ease both; }
+  .modal-header { padding:28px 28px 0; border-bottom:1px solid var(--border); padding-bottom:20px; }
+  .modal-eyebrow { font-family:'Space Mono',monospace; font-size:10px; color:var(--green); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; }
+  .modal-name { font-size:28px; font-weight:800; }
+  .modal-close { position:absolute; top:20px; right:20px; background:none; border:none; color:var(--muted); font-size:24px; cursor:pointer; line-height:1; padding:4px 8px; }
+  .modal-close:hover { color:var(--text); }
+  .modal-body { padding:24px 28px; }
+  .modal-stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:24px; }
+  .modal-stat { background:var(--surface2); padding:16px; }
+  .modal-stat-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .modal-stat-value { font-size:20px; font-weight:800; color:var(--green); }
+  .modal-stat-sub { font-size:11px; color:var(--dimmed); margin-top:2px; }
+  .modal-section-title { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .modal-round-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .modal-round-row:last-child { border-bottom:none; }
+  .modal-round-num { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); flex:0 0 24px; }
+  .modal-round-name { font-size:12px; color:var(--dimmed); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .modal-round-bar-wrap { flex:0 0 100px; height:4px; background:var(--border); }
+  .modal-round-bar { height:100%; background:var(--green); }
+  .modal-round-pts { font-family:'Space Mono',monospace; font-size:13px; font-weight:700; color:var(--green); flex:0 0 32px; text-align:right; }
+  .modal-round-pts.best { color:#FFD700; }
+  .modal-best-song { background:var(--surface2); border:1px solid var(--border); padding:14px 16px; margin-bottom:24px; }
+  .modal-best-song-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .modal-best-song-title { font-size:16px; font-weight:700; }
+  .modal-best-song-sub { font-size:12px; color:var(--dimmed); margin-top:3px; }
+
+  /* clickable player rows */
+  .lb-row { cursor:pointer; }
+  .lb-row:hover .lb-name { color:var(--green); }
+
+  /* SONG OF THE SEASON */
+  .song-season-list { display:flex; flex-direction:column; gap:1px; margin-bottom:40px; }
+  .song-season-row { display:grid; grid-template-columns:40px 1fr 80px 80px 60px; align-items:center; gap:12px; padding:14px 20px; background:var(--surface); border-left:3px solid transparent; transition:all 0.15s; }
+  .song-season-row:hover { background:var(--surface2); }
+  .song-season-row.gold-row { border-left-color:#FFD700; }
+  .song-season-row.silver-row { border-left-color:#C0C0C0; }
+  .song-season-row.bronze-row { border-left-color:#CD7F32; }
+  .song-season-rank { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); text-align:center; }
+  .song-season-info { min-width:0; }
+  .song-season-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song-season-artist { font-size:12px; color:var(--dimmed); margin-top:2px; }
+  .song-season-sub { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); text-align:center; }
+  .song-season-round { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); text-align:center; }
+  .song-season-pts { font-family:'Space Mono',monospace; font-size:18px; font-weight:700; color:var(--green); text-align:right; }
+  .song-season-header { display:grid; grid-template-columns:40px 1fr 80px 80px 60px; gap:12px; padding:10px 20px; background:var(--surface2); border:1px solid var(--border); border-bottom:none; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -172,6 +231,7 @@
 
 <nav class="nav animate">
   <button class="nav-tab active" onclick="showPanel('standings',this)">Standings</button>
+  <button class="nav-tab" onclick="showPanel('trajectory',this)">Season Trajectory</button>
   <button class="nav-tab" onclick="showPanel('rounds',this)">Round Results</button>
   <button class="nav-tab" onclick="showPanel('stats',this)">Fun Stats</button>
 </nav>
@@ -190,7 +250,7 @@
         <div id="season-stats-mini"></div>
       </div>
     </div>
-    <div class="section-title">Full Standings — after 7 of 10 rounds</div>
+    <div class="section-title">Full Standings — click a player to see their profile</div>
     <div class="leaderboard animate">
       <div class="lb-header">
         <div>#</div><div>Player</div>
@@ -199,6 +259,15 @@
         <div style="text-align:right">Points</div>
       </div>
       <div id="lb-rows"></div>
+    </div>
+  </section>
+
+  <!-- ===== TRAJECTORY ===== -->
+  <section class="panel" id="panel-trajectory">
+    <div class="chart-wrap animate">
+      <div class="chart-title">Cumulative Points — Season Trajectory</div>
+      <svg class="chart-svg" id="trajectory-svg"></svg>
+      <div class="chart-legend" id="chart-legend"></div>
     </div>
   </section>
 
@@ -211,11 +280,21 @@
   <!-- ===== FUN STATS ===== -->
   <section class="panel" id="panel-stats">
     <div class="stats-grid" id="stats-grid"></div>
+    <div class="section-title">🎵 Song of the Season — Top 20</div>
+    <div class="song-season-header">
+      <div></div><div>Song</div><div style="text-align:center">Submitter</div><div style="text-align:center">Round</div><div style="text-align:right">Pts</div>
+    </div>
+    <div class="song-season-list" id="song-season-list"></div>
     <div class="section-title">Player Submissions — all rounds</div>
     <div class="taste-table" id="taste-table"></div>
   </section>
 
 </main>
+
+<!-- PLAYER PROFILE MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
 
 <footer class="footer">
   <span>Gentrified Tilapia 🐟 Season 2 — 10 Rounds</span>
@@ -533,8 +612,221 @@ const ROUNDS = [
 ];
 
 // =====================================================================
-// COMPUTED DATA
+// PLAYER COLORS for trajectory chart
 // =====================================================================
+const PLAYER_COLORS = [
+  '#1DB954','#e05353','#f5a623','#5b9cf6','#c084fc',
+  '#34d399','#fb7185','#fbbf24','#60a5fa','#a78bfa',
+  '#f472b6','#4ade80','#94a3b8'
+];
+const playerColor = {};
+PLAYERS.forEach((p,i) => playerColor[p] = PLAYER_COLORS[i % PLAYER_COLORS.length]);
+
+// =====================================================================
+// TRAJECTORY CHART
+// =====================================================================
+function renderTrajectory() {
+  const svg = document.getElementById('trajectory-svg');
+  const legend = document.getElementById('chart-legend');
+
+  // Build cumulative scores per player per round
+  const cumulative = {};
+  PLAYERS.forEach(p => cumulative[p] = [0]);
+  ROUNDS.forEach(r => {
+    const roundScore = {};
+    PLAYERS.forEach(p => roundScore[p] = 0);
+    r.songs.forEach(s => roundScore[s.sub] += s.pts);
+    PLAYERS.forEach(p => {
+      const prev = cumulative[p][cumulative[p].length - 1];
+      cumulative[p].push(prev + roundScore[p]);
+    });
+  });
+
+  const W = 900, H = 380;
+  const padL = 48, padR = 24, padT = 16, padB = 40;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const numRounds = ROUNDS.length;
+  const maxVal = Math.max(...PLAYERS.map(p => cumulative[p][numRounds]));
+
+  const xScale = i => padL + (i / numRounds) * chartW;
+  const yScale = v => padT + chartH - (v / (maxVal * 1.05)) * chartH;
+
+  let svgHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;overflow:visible">`;
+
+  // Grid lines
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const val = Math.round((maxVal * 1.05 / gridLines) * i);
+    const y = yScale(val);
+    svgHTML += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#222" stroke-width="1"/>`;
+    svgHTML += `<text x="${padL - 6}" y="${y + 4}" text-anchor="end" fill="#555" font-size="10" font-family="Space Mono,monospace">${val}</text>`;
+  }
+
+  // X axis labels
+  for (let i = 0; i <= numRounds; i++) {
+    const x = xScale(i);
+    const label = i === 0 ? 'Start' : `R${i}`;
+    svgHTML += `<text x="${x}" y="${padT + chartH + 20}" text-anchor="middle" fill="#555" font-size="10" font-family="Space Mono,monospace">${label}</text>`;
+    if (i > 0) {
+      svgHTML += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + chartH}" stroke="#1a1a1a" stroke-width="1"/>`;
+    }
+  }
+
+  // Lines per player (dimmed ones drawn first, active on top)
+  const dimmedPlayers = new Set(
+    JSON.parse(localStorage.getItem('dimmedPlayers') || '[]')
+  );
+
+  // Draw lines
+  PLAYERS.forEach(p => {
+    const pts = cumulative[p];
+    const color = playerColor[p];
+    const isDimmed = dimmedPlayers.has(p);
+    const points = pts.map((v, i) => `${xScale(i)},${yScale(v)}`).join(' ');
+    svgHTML += `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="${isDimmed ? 1 : 2.5}" opacity="${isDimmed ? 0.15 : 0.9}" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+    // End dot + label
+    if (!isDimmed) {
+      const finalX = xScale(numRounds);
+      const finalY = yScale(pts[numRounds]);
+      svgHTML += `<circle cx="${finalX}" cy="${finalY}" r="4" fill="${color}"/>`;
+      svgHTML += `<text x="${finalX + 6}" y="${finalY + 4}" fill="${color}" font-size="9" font-family="Space Mono,monospace">${p.split(' ')[0]}</text>`;
+    }
+  });
+
+  svgHTML += `</svg>`;
+  svg.outerHTML = svgHTML;
+
+  // Legend
+  legend.innerHTML = PLAYERS.map(p => `
+    <div class="legend-item ${dimmedPlayers.has(p) ? 'dimmed' : ''}" onclick="togglePlayer('${p}')" title="Click to show/hide">
+      <div class="legend-dot" style="background:${playerColor[p]}"></div>
+      <span class="legend-label">${p}</span>
+    </div>`).join('');
+}
+
+function togglePlayer(name) {
+  const dimmed = new Set(JSON.parse(localStorage.getItem('dimmedPlayers') || '[]'));
+  if (dimmed.has(name)) dimmed.delete(name);
+  else dimmed.add(name);
+  localStorage.setItem('dimmedPlayers', JSON.stringify([...dimmed]));
+  renderTrajectory();
+}
+
+// =====================================================================
+// PLAYER PROFILE MODAL
+// =====================================================================
+function openProfile(playerName) {
+  const ranked = computeScores();
+  const player = ranked.find(p => p.name === playerName);
+  if (!player) return;
+
+  // Per-round scores
+  const roundScores = ROUNDS.map(r => {
+    const pts = r.songs.filter(s => s.sub === playerName).reduce((a, s) => a + s.pts, 0);
+    const songs = r.songs.filter(s => s.sub === playerName);
+    return { num: r.num, name: r.name, pts, songs };
+  });
+
+  const participated = roundScores.filter(r => r.songs.length > 0);
+  const maxRoundPts = Math.max(...participated.map(r => r.pts), 1);
+  const bestRound = participated.reduce((a, b) => b.pts > a.pts ? b : a, participated[0]);
+  const worstRound = participated.reduce((a, b) => b.pts < a.pts ? b : a, participated[0]);
+
+  // Best song
+  const allPlayerSongs = ROUNDS.flatMap(r => r.songs.filter(s => s.sub === playerName));
+  const bestSong = [...allPlayerSongs].sort((a, b) => b.pts - a.pts)[0];
+
+  // Top 3 finishes
+  const top3Finishes = ROUNDS.reduce((count, r) => {
+    const sorted = [...r.songs].sort((a,b) => b.pts - a.pts);
+    const top3Songs = sorted.slice(0, 3);
+    return count + r.songs.filter(s => s.sub === playerName && top3Songs.includes(s)).length;
+  }, 0);
+
+  // Current rank
+  const rank = player.rank;
+  const suffix = rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th';
+
+  const modal = document.getElementById('modal-content');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">Player Profile</div>
+      <div class="modal-name">${playerName}</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stat-grid">
+        <div class="modal-stat">
+          <div class="modal-stat-label">Season Rank</div>
+          <div class="modal-stat-value" style="color:${rank<=3?['#FFD700','#C0C0C0','#CD7F32'][rank-1]:'var(--green)'}">${rank}${suffix}</div>
+          <div class="modal-stat-sub">${player.pts} total pts</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Rounds Played</div>
+          <div class="modal-stat-value">${participated.length}</div>
+          <div class="modal-stat-sub">of 7 completed</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Top 3 Songs</div>
+          <div class="modal-stat-value">${top3Finishes}</div>
+          <div class="modal-stat-sub">across all rounds</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Best Round</div>
+          <div class="modal-stat-value" style="color:#FFD700">${bestRound ? bestRound.pts : '—'}</div>
+          <div class="modal-stat-sub">${bestRound ? `R${bestRound.num}` : ''}</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Worst Round</div>
+          <div class="modal-stat-value" style="color:#e05353">${worstRound ? worstRound.pts : '—'}</div>
+          <div class="modal-stat-sub">${worstRound ? `R${worstRound.num}` : ''}</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Avg / Round</div>
+          <div class="modal-stat-value">${participated.length ? (player.pts / participated.length).toFixed(1) : '—'}</div>
+          <div class="modal-stat-sub">pts per round</div>
+        </div>
+      </div>
+
+      ${bestSong ? `
+      <div class="modal-section-title">Best Song</div>
+      <div class="modal-best-song">
+        <div class="modal-best-song-label">🏆 Highest scoring submission</div>
+        <div class="modal-best-song-title">${bestSong.title}</div>
+        <div class="modal-best-song-sub">${bestSong.artist} · ${bestSong.pts} pts · ${bestSong.voters} voters</div>
+      </div>` : ''}
+
+      <div class="modal-section-title">Round by Round</div>
+      ${roundScores.map(r => {
+        const isBest = bestRound && r.pts === bestRound.pts && r.num === bestRound.num;
+        const didPlay = r.songs.length > 0;
+        return `<div class="modal-round-row">
+          <div class="modal-round-num">R${r.num}</div>
+          <div class="modal-round-name">${r.name}</div>
+          ${didPlay
+            ? `<div class="modal-round-bar-wrap"><div class="modal-round-bar" style="width:${Math.round(r.pts/maxRoundPts*100)}%"></div></div>
+               <div class="modal-round-pts ${isBest ? 'best' : ''}">${r.pts}</div>`
+            : `<div style="flex:1;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">sat out</div><div class="modal-round-pts" style="color:var(--muted)">—</div>`
+          }
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(event) {
+  if (!event || event.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+
 
 // Per-player total scores
 function computeScores() {
@@ -666,7 +958,7 @@ function renderStandings() {
   document.getElementById('lb-rows').innerHTML = ranked.map(p => {
     const rc = p.rank===1?'gold':p.rank===2?'silver':p.rank===3?'bronze':'';
     const suffix = p.rank===1?'st':p.rank===2?'nd':p.rank===3?'rd':'th';
-    return `<div class="lb-row">
+    return `<div class="lb-row" onclick="openProfile('${p.name}')">
       <div class="lb-pos ${rc}">${p.rank}${suffix}</div>
       <div class="lb-name">${p.name}</div>
       <div class="lb-rounds">${p.rounds}</div>
@@ -919,6 +1211,27 @@ function renderStats() {
     </div>`
   ).join('');
 
+  // Song of the Season — top 20
+  const allSongsRanked = ROUNDS.flatMap(r => r.songs.map(s => ({...s, roundNum:r.num, roundName:r.name})))
+    .sort((a,b) => b.pts - a.pts || b.voters - a.voters)
+    .slice(0, 20);
+
+  document.getElementById('song-season-list').innerHTML = allSongsRanked.map((s, i) => {
+    const rank = i + 1;
+    const rowClass = rank===1?'gold-row':rank===2?'silver-row':rank===3?'bronze-row':'';
+    const rankLabel = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':`${rank}`;
+    return `<div class="song-season-row ${rowClass}">
+      <div class="song-season-rank">${rankLabel}</div>
+      <div class="song-season-info">
+        <div class="song-season-title">${s.title}</div>
+        <div class="song-season-artist">${s.artist}</div>
+      </div>
+      <div class="song-season-sub">${s.sub}</div>
+      <div class="song-season-round">R${s.roundNum}</div>
+      <div class="song-season-pts">${s.pts}</div>
+    </div>`;
+  }).join('');
+
   // Taste table
   const byPlayer = {};
   PLAYERS.forEach(p=>byPlayer[p]=[]);
@@ -950,6 +1263,7 @@ function showPanel(name, btn) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
+  if(name==='trajectory') renderTrajectory();
 }
 
 // =====================================================================
