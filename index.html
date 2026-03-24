@@ -352,7 +352,7 @@
   <!-- ===== FUN STATS ===== -->
   <section class="panel" id="panel-stats">
     <div class="stats-grid" id="stats-grid"></div>
-    <div class="section-title">🎵 Song of the Season — Top 20</div>
+    <div class="section-title">🎵 Song of the Season — Top 10</div>
     <div class="song-season-header">
       <div></div><div>Song</div><div style="text-align:center">Submitter</div><div style="text-align:center">Round</div><div style="text-align:right">Pts</div>
     </div>
@@ -845,23 +845,36 @@ function renderTrajectory() {
 
     // Build tooltip content — top 3 by cumulative score at this round
     const r = ROUNDS[roundIdx - 1];
-    const standings = PLAYERS
-      .map(p => ({ name: p, cumPts: cumulative[p][roundIdx], roundPts: roundScores[roundIdx-1][p] }))
-      .sort((a, b) => b.cumPts - a.cumPts)
-      .slice(0, 3);
 
+    // Full standings at this round (for position badges)
+    const allStandings = PLAYERS
+      .map(p => ({ name: p, cumPts: cumulative[p][roundIdx], roundPts: roundScores[roundIdx-1][p] }))
+      .sort((a, b) => b.cumPts - a.cumPts);
+
+    // Assign ranks with ties
+    let tRank = 1;
+    allStandings.forEach((p, i) => {
+      if (i > 0 && p.cumPts === allStandings[i-1].cumPts) p.rank = allStandings[i-1].rank;
+      else p.rank = tRank;
+      tRank++;
+    });
+
+    const top3 = allStandings.slice(0, 3);
     const medals = ['🥇','🥈','🥉'];
+    const rankSuffix = n => n===1?'st':n===2?'nd':n===3?'rd':'th';
+
     tooltip.innerHTML = `
       <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:10px;">After Round ${roundIdx} — ${r.name}</div>
-      ${standings.map((p, i) => `
+      ${top3.map((p, i) => `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;${i===2?'margin-bottom:0':''}">
           <span style="font-size:14px">${medals[i]}</span>
           <div style="width:8px;height:8px;border-radius:50%;background:${playerColor[p.name]};flex-shrink:0"></div>
           <span style="font-size:13px;font-weight:700;flex:1">${p.name}</span>
+          <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">${p.rank}${rankSuffix(p.rank)}</span>
           <span style="font-family:'Space Mono',monospace;font-size:12px;color:${playerColor[p.name]}">${p.cumPts}</span>
         </div>`).join('')}
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid #222;font-family:'Space Mono',monospace;font-size:9px;color:#555;">
-        This round: ${standings.map(p => `${p.name.split(' ')[0]} +${p.roundPts}`).join(' · ')}
+        This round: ${top3.map(p => `${p.name.split(' ')[0]} +${p.roundPts}`).join(' · ')}
       </div>
     `;
 
@@ -1001,13 +1014,17 @@ function openProfile(playerName) {
       ${roundScores.map(r => {
         const isBest = bestRound && r.pts === bestRound.pts && r.num === bestRound.num;
         const didPlay = r.songs.length > 0;
+        const roundBestSong = didPlay ? [...r.songs].sort((a,b) => b.pts - a.pts)[0] : null;
         return `<div class="modal-round-row">
           <div class="modal-round-num">R${r.num}</div>
-          <div class="modal-round-name">${r.name}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="modal-round-name">${r.name}</div>
+            ${roundBestSong ? `<div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">↳ ${roundBestSong.title} <span style="color:var(--green)">${roundBestSong.pts}pts</span></div>` : ''}
+          </div>
           ${didPlay
-            ? `<div class="modal-round-bar-wrap"><div class="modal-round-bar" style="width:${Math.round(r.pts/maxRoundPts*100)}%"></div></div>
+            ? `<div class="modal-round-bar-wrap" style="flex:0 0 80px;"><div class="modal-round-bar" style="width:${Math.round(r.pts/maxRoundPts*100)}%"></div></div>
                <div class="modal-round-pts ${isBest ? 'best' : ''}">${r.pts}</div>`
-            : `<div style="flex:1;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">sat out</div><div class="modal-round-pts" style="color:var(--muted)">—</div>`
+            : `<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);padding-left:8px;">sat out</div><div class="modal-round-pts" style="color:var(--muted)">—</div>`
           }
         </div>`;
       }).join('')}
@@ -1204,6 +1221,14 @@ function showRound(idx) {
   PLAYERS.forEach(p=>playerTotals[p]=0);
   r.songs.forEach(s=>playerTotals[s.sub]+=s.pts);
 
+  // Previous round scores for movement arrows
+  const prevTotals = {};
+  if (idx > 0) {
+    const prevRound = ROUNDS[idx - 1];
+    PLAYERS.forEach(p=>prevTotals[p]=0);
+    prevRound.songs.forEach(s=>prevTotals[s.sub]+=s.pts);
+  }
+
   // Only players who submitted
   const participants = Object.entries(playerTotals)
     .filter(([,pts])=>pts>0 || r.songs.some(s=>s.sub===Object.keys(playerTotals).find(k=>k===s.sub)))
@@ -1291,12 +1316,21 @@ function showRound(idx) {
       <div class="round-card">
         <div class="round-card-title">📊 Points by Player</div>
         <div class="player-scores-list">
-          ${playerRows.map(p=>`
-            <div class="player-score-row">
+          ${playerRows.map(p => {
+            const prev = prevTotals[p.name];
+            let arrow = '';
+            if (idx > 0 && prev !== undefined) {
+              if (p.pts > prev) arrow = `<span style="color:#34d399;font-size:11px;flex-shrink:0">▲${p.pts - prev}</span>`;
+              else if (p.pts < prev) arrow = `<span style="color:#e05353;font-size:11px;flex-shrink:0">▼${prev - p.pts}</span>`;
+              else arrow = `<span style="color:var(--muted);font-size:11px;flex-shrink:0">—</span>`;
+            }
+            return `<div class="player-score-row">
               <div class="pscore-name">${p.name}</div>
               <div class="pscore-bar-wrap"><div class="pscore-bar ${p.pts===winner.pts?'winner':''}" style="width:${Math.round(p.pts/maxPts*100)}%"></div></div>
               <div class="pscore-val ${p.pts===winner.pts?'winner':p.pts===0?'zero':''}">${p.pts}</div>
-            </div>`).join('')}
+              ${arrow}
+            </div>`;
+          }).join('')}
         </div>
       </div>
     </div>
@@ -1407,10 +1441,10 @@ function renderStats() {
     </div>`
   ).join('');
 
-  // Song of the Season — top 20
+  // Song of the Season — top 10
   const allSongsRanked = ROUNDS.flatMap(r => r.songs.map(s => ({...s, roundNum:r.num, roundName:r.name})))
     .sort((a,b) => b.pts - a.pts || b.voters - a.voters)
-    .slice(0, 20);
+    .slice(0, 10);
 
   document.getElementById('song-season-list').innerHTML = allSongsRanked.map((s, i) => {
     const rank = i + 1;
