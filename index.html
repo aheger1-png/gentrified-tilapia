@@ -155,11 +155,40 @@
   /* FUN STATS */
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:40px;}
   .stat-card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden;}
+  .stat-card.hero{grid-column:span 2;display:flex;align-items:center;gap:24px;padding:28px 32px;}
+  .stat-card.hero .stat-value{font-size:36px;}
+  .stat-card.hero::after{font-size:80px;bottom:-16px;}
+  @media(max-width:700px){.stat-card.hero{grid-column:span 1;flex-direction:column;align-items:flex-start;gap:8px;}}
   .stat-card::after{content:attr(data-emoji);position:absolute;bottom:-10px;right:10px;font-size:60px;opacity:0.06;pointer-events:none;}
   .stat-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .stat-value{font-size:24px;font-weight:800;color:var(--green);line-height:1;margin-bottom:4px;}
   .stat-sub{font-size:13px;color:var(--dimmed);margin-top:4px;}
   .stat-detail{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;}
+
+  /* clickable row hint */
+  .lb-row::after { content:'›'; color:var(--muted); font-size:18px; margin-left:auto; padding-left:12px; transition:color 0.15s; }
+  .lb-row:hover::after { color:var(--green); }
+  .lb-header { display:grid; grid-template-columns:48px 1fr repeat(3,80px) 24px; padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--border); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .lb-row { display:grid; grid-template-columns:48px 1fr repeat(3,80px) 24px; padding:16px 20px; border-bottom:1px solid var(--border); align-items:center; transition:background 0.15s; }
+
+  /* Show all / hide all legend toggle */
+  .legend-controls { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .legend-toggle-btn {
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); background:var(--surface); border:1px solid var(--border);
+    padding:5px 12px; cursor:pointer; transition:all 0.15s;
+  }
+  .legend-toggle-btn:hover { color:var(--green); border-color:var(--green); }
+
+  /* Submissions sort toggle */
+  .sort-toggle { display:flex; gap:8px; margin-bottom:20px; }
+  .sort-btn {
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); background:var(--surface); border:1px solid var(--border);
+    padding:7px 14px; cursor:pointer; transition:all 0.15s;
+  }
+  .sort-btn.active { color:var(--green); border-color:var(--green); background:var(--green-dim); }
+  .sort-btn:hover:not(.active) { color:var(--text); }
 
   /* TASTE TABLE */
   .taste-table{background:var(--surface);border:1px solid var(--border);overflow:hidden;margin-bottom:40px;}
@@ -248,8 +277,8 @@
     .main { padding:20px 16px; }
 
     /* Leaderboard — hide Rounds and Voters columns on small screens */
-    .lb-header { grid-template-columns:36px 1fr 64px; }
-    .lb-row { grid-template-columns:36px 1fr 64px; }
+    .lb-header { grid-template-columns:36px 1fr 64px 20px; }
+    .lb-row { grid-template-columns:36px 1fr 64px 20px; }
     .lb-rounds, .lb-voters { display:none; }
 
     /* Standings podium — tighter */
@@ -327,13 +356,14 @@
         <div id="season-stats-mini"></div>
       </div>
     </div>
-    <div class="section-title">Full Standings — click a player to see their profile</div>
+    <div class="section-title">Full Standings — tap any player to see their profile</div>
     <div class="leaderboard animate">
       <div class="lb-header">
         <div>#</div><div>Player</div>
         <div style="text-align:center">Rounds</div>
         <div style="text-align:center">Total Voters</div>
         <div style="text-align:right">Points</div>
+        <div></div>
       </div>
       <div id="lb-rows"></div>
     </div>
@@ -344,7 +374,10 @@
     <div class="chart-wrap animate">
       <div class="chart-title">Cumulative Points — Season Trajectory</div>
       <svg class="chart-svg" id="trajectory-svg"></svg>
-      <div class="chart-legend" id="chart-legend"></div>
+      <div class="legend-controls">
+        <div class="chart-legend" id="chart-legend"></div>
+        <button class="legend-toggle-btn" id="legend-toggle-btn" onclick="toggleAllPlayers()">Hide All</button>
+      </div>
     </div>
   </section>
 
@@ -368,6 +401,10 @@
 
   <!-- ===== PLAYER SUBMISSIONS ===== -->
   <section class="panel" id="panel-submissions">
+    <div class="sort-toggle">
+      <button class="sort-btn active" id="sort-score-btn" onclick="setSubmissionsSort('score')">Sort by Score</button>
+      <button class="sort-btn" id="sort-round-btn" onclick="setSubmissionsSort('round')">Sort by Round</button>
+    </div>
     <div class="section-title">Player Submissions — all rounds</div>
     <div class="taste-table" id="taste-table"></div>
   </section>
@@ -923,6 +960,10 @@ function renderTrajectory() {
       <div class="legend-dot" style="background:${playerColor[p]}"></div>
       <span class="legend-label">${p}</span>
     </div>`).join('');
+
+  // Update toggle button label
+  const toggleBtn = document.getElementById('legend-toggle-btn');
+  if (toggleBtn) toggleBtn.textContent = dimmedPlayers.size === PLAYERS.length ? 'Show All' : 'Hide All';
 }
 
 function togglePlayer(name) {
@@ -1426,20 +1467,21 @@ function renderStats() {
   const zeroCount = allSongs.filter(s=>s.pts===0).length;
 
   const statsData = [
-    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 7 rounds`,detail:''},
-    {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`},
-    {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week'},
-    {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`},
-    {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`},
-
+    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 7 rounds`,detail:'',hero:true},
+    {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`,hero:true},
+    {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week',hero:false},
+    {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`,hero:false},
+    {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`,hero:false},
   ];
 
   document.getElementById('stats-grid').innerHTML = statsData.map(s =>
-    `<div class="stat-card" data-emoji="${s.emoji}">
-      <div class="stat-label">${s.label}</div>
-      <div class="stat-value">${s.value}</div>
-      ${s.sub?`<div class="stat-sub">${s.sub}</div>`:''}
-      ${s.detail?`<div class="stat-detail">${s.detail}</div>`:''}
+    `<div class="stat-card ${s.hero?'hero':''}" data-emoji="${s.emoji}">
+      <div>
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-value">${s.value}</div>
+        ${s.sub?`<div class="stat-sub">${s.sub}</div>`:''}
+        ${s.detail?`<div class="stat-detail">${s.detail}</div>`:''}
+      </div>
     </div>`
   ).join('');
 
@@ -1465,18 +1507,35 @@ function renderStats() {
   }).join('');
 
   // Taste table
+  renderTasteTable('score');
+}
+
+let currentSort = 'score';
+
+function setSubmissionsSort(mode) {
+  currentSort = mode;
+  document.getElementById('sort-score-btn').classList.toggle('active', mode === 'score');
+  document.getElementById('sort-round-btn').classList.toggle('active', mode === 'round');
+  renderTasteTable(mode);
+}
+
+function renderTasteTable(sortMode) {
   const byPlayer = {};
-  PLAYERS.forEach(p=>byPlayer[p]=[]);
-  ROUNDS.forEach(r=>r.songs.forEach(s=>byPlayer[s.sub].push({...s,round:r.num})));
-  const sortedPlayers = [...PLAYERS].sort((a,b)=>{
+  PLAYERS.forEach(p => byPlayer[p] = []);
+  ROUNDS.forEach(r => r.songs.forEach(s => byPlayer[s.sub].push({...s, round:r.num})));
+
+  const sortedPlayers = [...PLAYERS].sort((a,b) => {
     const aTotal = byPlayer[a].reduce((x,s)=>x+s.pts,0);
     const bTotal = byPlayer[b].reduce((x,s)=>x+s.pts,0);
-    return bTotal-aTotal;
+    return bTotal - aTotal;
   });
+
   document.getElementById('taste-table').innerHTML = sortedPlayers.map(p => {
-    const songs = byPlayer[p];
+    const songs = [...byPlayer[p]];
+    if (sortMode === 'score') songs.sort((a,b) => b.pts - a.pts);
+    else songs.sort((a,b) => a.round - b.round);
     const total = songs.reduce((x,s)=>x+s.pts,0);
-    const pills = songs.map(s=>
+    const pills = songs.map(s =>
       `<span class="taste-song-pill" title="R${s.round}: ${s.pts}pts">${s.title.slice(0,22)}${s.title.length>22?'…':''} <span style="color:var(--green)">${s.pts}</span></span>`
     ).join('');
     return `<div class="taste-row">
@@ -1485,6 +1544,19 @@ function renderStats() {
       <div class="taste-score">${total}</div>
     </div>`;
   }).join('');
+}
+
+function toggleAllPlayers() {
+  const dimmed = new Set(JSON.parse(localStorage.getItem('dimmedPlayers') || '[]'));
+  const allDimmed = dimmed.size === PLAYERS.length;
+  if (allDimmed) {
+    localStorage.setItem('dimmedPlayers', '[]');
+    document.getElementById('legend-toggle-btn').textContent = 'Hide All';
+  } else {
+    localStorage.setItem('dimmedPlayers', JSON.stringify(PLAYERS));
+    document.getElementById('legend-toggle-btn').textContent = 'Show All';
+  }
+  renderTrajectory();
 }
 
 // =====================================================================
