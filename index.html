@@ -99,13 +99,19 @@
   .lb-pts{font-family:'Space Mono',monospace;font-size:14px;color:var(--green);font-weight:700;text-align:right;}
   .lb-pts.zero{color:var(--muted);}
 
-  /* ROUND RESULTS */
-  .round-selector { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
-  .round-btn { padding:8px 16px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:all 0.15s; }
-  .round-btn:hover{color:var(--text);border-color:var(--dimmed);}
-  .round-btn.active{color:var(--green);border-color:var(--green);background:var(--green-dim);}
-
-  /* Round summary layout */
+  /* ROUND SELECTOR DROPDOWN */
+  .round-dropdown-wrap { margin-bottom:32px; }
+  .round-dropdown {
+    background:var(--surface); border:1px solid var(--border); color:var(--text);
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1px;
+    text-transform:uppercase; padding:12px 16px; cursor:pointer;
+    width:100%; max-width:480px; appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center;
+    padding-right:40px;
+  }
+  .round-dropdown:focus { outline:none; border-color:var(--green); }
+  .round-dropdown option { background:var(--surface2); color:var(--text); }
   .round-summary-header { margin-bottom:32px; }
   .round-summary-title { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
   .round-summary-desc { color:var(--muted); margin-top:8px; font-size:14px; }
@@ -275,9 +281,8 @@
     .legend-label { font-size:9px; }
     .chart-wrap { padding:20px 12px 16px; }
 
-    /* Round selector wraps nicely */
-    .round-selector { gap:6px; }
-    .round-btn { padding:7px 10px; font-size:10px; }
+    /* Round selector dropdown */
+    .round-dropdown { max-width:100%; font-size:11px; }
 
     /* Footer */
     .footer { padding:20px 16px; flex-direction:column; gap:4px; }
@@ -345,7 +350,9 @@
 
   <!-- ===== ROUNDS ===== -->
   <section class="panel" id="panel-rounds">
-    <div class="round-selector" id="round-selector"></div>
+    <div class="round-dropdown-wrap">
+      <select class="round-dropdown" id="round-dropdown" onchange="showRound(this.value)"></select>
+    </div>
     <div id="round-summary"></div>
   </section>
 
@@ -1199,20 +1206,15 @@ function renderStandings() {
 // RENDER ROUNDS — summary view
 // =====================================================================
 function renderRounds() {
-  const sel = document.getElementById('round-selector');
-  sel.innerHTML = ROUNDS.map((r,i) =>
-    `<button class="round-btn ${i===0?'active':''}" onclick="selectRound(${i},this)">R${r.num}: ${r.name}</button>`
+  const dropdown = document.getElementById('round-dropdown');
+  dropdown.innerHTML = ROUNDS.map((r,i) =>
+    `<option value="${i}">Round ${r.num}: ${r.name}</option>`
   ).join('');
   showRound(0);
 }
 
-function selectRound(idx, btn) {
-  document.querySelectorAll('.round-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  showRound(idx);
-}
-
 function showRound(idx) {
+  idx = parseInt(idx);
   const r = ROUNDS[idx];
   const sorted = [...r.songs].sort((a,b)=>b.pts-a.pts||b.voters-a.voters);
 
