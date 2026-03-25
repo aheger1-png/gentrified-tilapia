@@ -94,6 +94,7 @@
   .lb-pos{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);}
   .lb-pos.gold{color:#FFD700;font-weight:700;} .lb-pos.silver{color:#C0C0C0;font-weight:700;} .lb-pos.bronze{color:#CD7F32;font-weight:700;}
   .lb-name{font-weight:700;font-size:15px;}
+  .lb-row:hover .lb-name { color:var(--green); text-decoration:underline; text-underline-offset:3px; }
   .lb-rounds{font-family:'Space Mono',monospace;font-size:12px;color:var(--dimmed);text-align:center;}
   .lb-voters{font-family:'Space Mono',monospace;font-size:12px;color:var(--dimmed);text-align:center;}
   .lb-pts{font-family:'Space Mono',monospace;font-size:14px;color:var(--green);font-weight:700;text-align:right;}
@@ -346,18 +347,8 @@
 
   <!-- ===== STANDINGS ===== -->
   <section class="panel active" id="panel-standings">
-    <div class="standings-grid animate">
-      <div class="podium-card">
-        <div class="podium-label">🏆 Season Leaderboard — Top 5</div>
-        <div id="podium-rows"></div>
-      </div>
-      <div class="podium-card">
-        <div class="podium-label">📊 Season Stats</div>
-        <div id="season-stats-mini"></div>
-      </div>
-    </div>
-    <div class="section-title">Full Standings — tap any player to see their profile</div>
-    <div class="leaderboard animate">
+    <div class="section-title" style="margin-bottom:24px;">Full Standings — <span style="color:var(--green)">click any name for full profile</span></div>
+    <div class="leaderboard animate" style="margin-bottom:32px;">
       <div class="lb-header">
         <div>#</div><div>Player</div>
         <div style="text-align:center">Rounds</div>
@@ -366,6 +357,12 @@
         <div></div>
       </div>
       <div id="lb-rows"></div>
+    </div>
+    <div class="standings-grid animate">
+      <div class="podium-card">
+        <div class="podium-label">📊 Season Stats</div>
+        <div id="season-stats-mini"></div>
+      </div>
     </div>
   </section>
 
@@ -1189,20 +1186,6 @@ function computeAffinity() {
 // =====================================================================
 function renderStandings() {
   const ranked = computeScores();
-  const maxPts = ranked[0].pts;
-
-  // Podium top 5
-  const podiumHTML = ranked.slice(0,5).map(p => {
-    const rc = p.rank===1?'gold':p.rank===2?'silver':p.rank===3?'bronze':'';
-    const suffix = p.rank===1?'st':p.rank===2?'nd':p.rank===3?'rd':'th';
-    return `<div class="podium-row">
-      <div class="podium-rank ${rc}">${p.rank}${suffix}</div>
-      <div class="podium-name">${p.name}</div>
-      <div class="podium-bar-wrap"><div class="podium-bar" style="width:${Math.round(p.pts/maxPts*100)}%"></div></div>
-      <div class="podium-pts">${p.pts} pts</div>
-    </div>`;
-  }).join('');
-  document.getElementById('podium-rows').innerHTML = podiumHTML;
 
   // Season stats mini
   const totalSongs = ROUNDS.reduce((a,r)=>a+r.songs.length,0);
