@@ -1241,9 +1241,9 @@ function showRound(idx) {
   const maxPts = Math.max(...playerRows.map(p=>p.pts), 1);
   const winner = playerRows[0];
 
-  // Top 3 songs
-  const top3 = sorted.slice(0,3);
-  const medals = ['🥇','🥈','🥉'];
+  // Top 5 songs
+  const top3 = sorted.slice(0,5);
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
 
   // Round stats
   const totalPts = r.songs.reduce((a,s)=>a+s.pts,0);
@@ -1298,7 +1298,7 @@ function showRound(idx) {
 
     <div class="round-summary-grid">
       <div class="round-card">
-        <div class="round-card-title">🏆 Top 3 Songs</div>
+        <div class="round-card-title">🏆 Top 5 Songs</div>
         <div class="top3-list">
           ${top3.map((s,i)=>`
             <div class="top3-song">
