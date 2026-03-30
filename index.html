@@ -1778,7 +1778,9 @@ function renderRounds() {
   dropdown.innerHTML = ROUNDS.map((r,i) =>
     `<option value="${i}">Round ${r.num}: ${r.name}</option>`
   ).join('');
-  showRound(0);
+  const lastIdx = ROUNDS.length - 1;
+  dropdown.value = lastIdx;
+  showRound(lastIdx);
 }
 
 function showRound(idx) {
