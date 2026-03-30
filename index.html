@@ -328,8 +328,8 @@
     <div class="meta-item">Rounds <strong>10</strong></div>
     <div class="meta-item">Players <strong>13</strong></div>
     <div class="meta-item">Songs/Round <strong>3</strong></div>
-    <div class="meta-item">Completed <strong>7 / 10</strong></div>
-    <div class="meta-item">Last Updated <strong>Round 7 — SigEp Safari</strong></div>
+    <div class="meta-item">Completed <strong>8 / 10</strong></div>
+    <div class="meta-item">Last Updated <strong>Round 8 — Divorce Dad Rock</strong></div>
   </div>
 </header>
 
@@ -357,12 +357,6 @@
         <div></div>
       </div>
       <div id="lb-rows"></div>
-    </div>
-    <div class="standings-grid animate">
-      <div class="podium-card">
-        <div class="podium-label">📊 Season Stats</div>
-        <div id="season-stats-mini"></div>
-      </div>
     </div>
   </section>
 
@@ -415,7 +409,7 @@
 
 <footer class="footer">
   <span>Gentrified Tilapia 🐟 Season 2 — 10 Rounds</span>
-  <span>Data through Round 7</span>
+  <span>Data through Round 8</span>
 </footer>
 
 <script>
@@ -724,6 +718,51 @@ const ROUNDS = [
       {title:"Crave You",artist:"Flight Facilities",pts:0,voters:0,sub:"Rick Rob"},
       {title:"Sandstorm",artist:"Darude",pts:0,voters:0,sub:"Ben King"},
       {title:"Goodbye Horses",artist:"Q Lazzarus",pts:0,voters:0,sub:"cflaherty120"},
+    ]
+  },
+  {
+    num:8, name:"Divorce Dad Rock",
+    desc:"",
+    songs:[
+      {title:"How You Remind Me",artist:"Nickelback",pts:9,voters:9,sub:"Kevin Potts"},
+      {title:"She Hates Me",artist:"Puddle Of Mudd",pts:8,voters:8,sub:"Kevin Potts"},
+      {title:"It's Been Awhile",artist:"Staind",pts:8,voters:7,sub:"shaznasty"},
+      {title:"Blurry",artist:"Puddle Of Mudd",pts:7,voters:7,sub:"Aaron Heger"},
+      {title:"I Hate Everything About You",artist:"Three Days Grace",pts:6,voters:6,sub:"Kevin Potts"},
+      {title:"Crazy Bitch",artist:"Buckcherry",pts:6,voters:6,sub:"Vic Alonso"},
+      {title:"Addicted",artist:"Saving Abel",pts:6,voters:6,sub:"Brendon Schmidt"},
+      {title:"Lips Of An Angel",artist:"Hinder",pts:5,voters:5,sub:"Vic Alonso"},
+      {title:"Headstrong",artist:"Trapt",pts:5,voters:5,sub:"Ben King"},
+      {title:"Alive",artist:"P.O.D.",pts:5,voters:5,sub:"Steffen LoCascio"},
+      {title:"Cold",artist:"Crossfade",pts:5,voters:5,sub:"Brendon Schmidt"},
+      {title:"Here Without You",artist:"3 Doors Down",pts:5,voters:4,sub:"cflaherty120"},
+      {title:"Here's to the Night",artist:"Eve 6",pts:4,voters:4,sub:"shaznasty"},
+      {title:"It's Not Over",artist:"Daughtry",pts:4,voters:4,sub:"Vic Alonso"},
+      {title:"With Arms Wide Open",artist:"Creed",pts:4,voters:4,sub:"cflaherty120"},
+      {title:"Let Her Cry",artist:"Hootie & The Blowfish",pts:4,voters:4,sub:"Tyler Hundley"},
+      {title:"Click Click Boom",artist:"Saliva",pts:3,voters:3,sub:"Steffen LoCascio"},
+      {title:"Here I Go Again",artist:"Whitesnake",pts:3,voters:3,sub:"Tyler Hundley"},
+      {title:"Bullet With Butterfly Wings",artist:"The Smashing Pumpkins",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"Break Stuff",artist:"Limp Bizkit",pts:3,voters:3,sub:"Steffen LoCascio"},
+      {title:"The Kids Aren't Alright",artist:"The Offspring",pts:3,voters:3,sub:"Rick Rob"},
+      {title:"Last Resort",artist:"Papa Roach",pts:3,voters:3,sub:"Aaron Heger"},
+      {title:"When I'm Gone",artist:"3 Doors Down",pts:3,voters:3,sub:"Tej vill"},
+      {title:"One Last Breath",artist:"Creed",pts:2,voters:2,sub:"cflaherty120"},
+      {title:"Meant to Live",artist:"Switchfoot",pts:2,voters:2,sub:"Aaron Heger"},
+      {title:"Fat Bottomed Girls",artist:"Queen",pts:2,voters:2,sub:"Tej vill"},
+      {title:"The Pretender",artist:"Foo Fighters",pts:2,voters:2,sub:"Rick Rob"},
+      {title:"Rockstar",artist:"Nickelback",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"You And Me",artist:"Lifehouse",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"Kryptonite",artist:"3 Doors Down",pts:2,voters:2,sub:"Tyler Hundley"},
+      {title:"Iris",artist:"The Goo Goo Dolls",pts:2,voters:2,sub:"j.suastegui"},
+      {title:"The Diary Of Jane",artist:"Breaking Benjamin",pts:1,voters:1,sub:"shaznasty"},
+      {title:"Cumbersome",artist:"Seven Mary Three",pts:1,voters:1,sub:"Brendon Schmidt"},
+      {title:"Photograph",artist:"Nickelback",pts:0,voters:0,sub:"Ben King"},
+      {title:"Foreplay / Long Time",artist:"Boston",pts:0,voters:0,sub:"Adam Share"},
+      {title:"Outside",artist:"Staind",pts:0,voters:0,sub:"Tej vill"},
+      {title:"You Give Love A Bad Name",artist:"Bon Jovi",pts:0,voters:0,sub:"Adam Share"},
+      {title:"Your Body Is a Wonderland",artist:"John Mayer",pts:0,voters:0,sub:"Ben King"},
+      {title:"Only Time Will Tell",artist:"Asia",pts:0,voters:0,sub:"Adam Share"},
     ]
   },
 ];
@@ -1450,7 +1489,7 @@ function renderStats() {
   const zeroCount = allSongs.filter(s=>s.pts===0).length;
 
   const statsData = [
-    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 7 rounds`,detail:'',hero:true},
+    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 8 rounds`,detail:'',hero:true},
     {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`,hero:true},
     {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week',hero:false},
     {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`,hero:false},
