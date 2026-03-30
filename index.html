@@ -1990,26 +1990,83 @@ function renderStats() {
   PLAYERS.forEach(p=>flops[p]=0);
   allSongs.forEach(s=>{ if(s.pts===0) flops[s.sub]++; });
   const mostFlops = Object.entries(flops).sort((a,b)=>b[1]-a[1])[0];
-
-  // Total 0-vote songs
   const zeroCount = allSongs.filter(s=>s.pts===0).length;
 
+  // Biggest single-round comeback (largest pts gain vs previous round)
+  let biggestComeback = { player:'', delta:0, fromPts:0, toPts:0, roundNum:0, roundName:'' };
+  PLAYERS.forEach(p => {
+    for(let i=1; i<ROUNDS.length; i++) {
+      const prev = ROUNDS[i-1].songs.filter(s=>s.sub===p).reduce((a,s)=>a+s.pts,0);
+      const curr = ROUNDS[i].songs.filter(s=>s.sub===p).reduce((a,s)=>a+s.pts,0);
+      const delta = curr - prev;
+      if(delta > biggestComeback.delta) {
+        biggestComeback = { player:p, delta, fromPts:prev, toPts:curr, roundNum:ROUNDS[i].num, roundName:ROUNDS[i].name };
+      }
+    }
+  });
+
+  // Best voter — whose votes most often went to top-3 finishing songs
+  const voterAccuracy = {};
+  PLAYERS.forEach(p => voterAccuracy[p] = { hits:0, total:0 });
+  ROUNDS.forEach(r => {
+    const sorted = [...r.songs].sort((a,b)=>b.pts-a.pts);
+    // top 3 distinct point values
+    const top3pts = [...new Set(sorted.map(s=>s.pts))].slice(0,3);
+    const top3songs = sorted.filter(s=>top3pts.includes(s.pts));
+    VOTE_DATA.filter(vd=>vd.r===r.num).forEach(vd => {
+      vd.votes.forEach(v => {
+        if(v.v === vd.sub) return; // skip self
+        voterAccuracy[v.v].total++;
+        if(top3songs.find(s=>s.title===vd.title && s.sub===vd.sub)) voterAccuracy[v.v].hits++;
+      });
+    });
+  });
+  const bestVoter = Object.entries(voterAccuracy)
+    .filter(([,d])=>d.total>=10)
+    .map(([p,d])=>({player:p, pct:d.hits/d.total, hits:d.hits, total:d.total}))
+    .sort((a,b)=>b.pct-a.pct)[0];
+
+  // Most competitive round — smallest gap between highest and lowest scorer
+  const roundCompetition = ROUNDS.map(r => {
+    const scores = [...new Set(r.songs.map(s=>s.sub))].map(p =>
+      r.songs.filter(s=>s.sub===p).reduce((a,s)=>a+s.pts,0)
+    );
+    const gap = Math.max(...scores) - Math.min(...scores);
+    return { num:r.num, name:r.name, gap, max:Math.max(...scores), min:Math.min(...scores) };
+  }).sort((a,b)=>a.gap-b.gap)[0];
+
+  // Longest scoring streak — most consecutive rounds with at least 1 pt scored per song submitted
+  // (no zero-vote songs that round)
+  let longestStreak = { player:'', length:0, startRound:0 };
+  PLAYERS.forEach(p => {
+    let streak = 0, best = 0, start = 0;
+    ROUNDS.forEach((r,i) => {
+      const mySongs = r.songs.filter(s=>s.sub===p);
+      if(mySongs.length === 0) { streak=0; return; }
+      const allScored = mySongs.every(s=>s.pts>0);
+      if(allScored) { if(streak===0) start=r.num; streak++; if(streak>best) { best=streak; } }
+      else streak=0;
+    });
+    if(best > longestStreak.length) longestStreak = { player:p, length:best, startRound:start };
+  });
+
   const statsData = [
-    {emoji:'👑',label:'Season Leader',value:ranked[0].name,sub:`${ranked[0].pts} pts through 8 rounds`,detail:'',hero:true},
-    {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`Submitted by ${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`,hero:true},
-    {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Round winner = most pts that week',hero:false},
-    {emoji:'🫠',label:'Most Flopped Songs',value:`${mostFlops[0]}`,sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total zero-vote songs this season`,hero:false},
-    {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:`${bestRoundPlayer}`,detail:`Round ${bestRoundNum} — ${bestRoundName}`,hero:false},
+    {emoji:'🔥',label:'Highest Scoring Song',value:bestSong.title,sub:`${bestSong.artist} — ${bestSong.pts} pts`,detail:`${bestSong.sub} · Round ${ROUNDS.find(r=>r.songs.includes(bestSong))?.num}`},
+    {emoji:'🏆',label:'Most Round Wins',value:mostWins[0],sub:`Won ${mostWins[1]} round${mostWins[1]!==1?'s':''}`,detail:'Most pts that week'},
+    {emoji:'🫠',label:'Most Flopped Songs',value:mostFlops[0],sub:`${mostFlops[1]} songs with 0 votes`,detail:`${zeroCount} total flops this season`},
+    {emoji:'⚡',label:'Most Points in a Single Round',value:`${bestRoundScore} pts`,sub:bestRoundPlayer,detail:`Round ${bestRoundNum} — ${bestRoundName}`},
+    {emoji:'📈',label:'Biggest Single-Round Comeback',value:biggestComeback.player,sub:`+${biggestComeback.delta} pts vs prior round`,detail:`${biggestComeback.fromPts}→${biggestComeback.toPts} pts · Round ${biggestComeback.roundNum}`},
+    {emoji:'🎯',label:'Best Voter',value:bestVoter?.player||'—',sub:`${bestVoter?Math.round(bestVoter.pct*100):'—'}% of votes hit top 3`,detail:`${bestVoter?.hits||0} of ${bestVoter?.total||0} votes landed`},
+    {emoji:'⚔️',label:'Most Competitive Round',value:`Round ${roundCompetition.num}`,sub:roundCompetition.name,detail:`Only ${roundCompetition.gap} pts gap — high ${roundCompetition.max}, low ${roundCompetition.min}`},
+    {emoji:'🔥',label:'Longest No-Flop Streak',value:`${longestStreak.length} rounds`,sub:longestStreak.player,detail:`All songs scored — ${longestStreak.length} rounds straight`},
   ];
 
   document.getElementById('stats-grid').innerHTML = statsData.map(s =>
-    `<div class="stat-card ${s.hero?'hero':''}" data-emoji="${s.emoji}">
-      <div>
-        <div class="stat-label">${s.label}</div>
-        <div class="stat-value">${s.value}</div>
-        ${s.sub?`<div class="stat-sub">${s.sub}</div>`:''}
-        ${s.detail?`<div class="stat-detail">${s.detail}</div>`:''}
-      </div>
+    `<div class="stat-card" data-emoji="${s.emoji}">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value">${s.value}</div>
+      ${s.sub?`<div class="stat-sub">${s.sub}</div>`:''}
+      ${s.detail?`<div class="stat-detail">${s.detail}</div>`:''}
     </div>`
   ).join('');
 
