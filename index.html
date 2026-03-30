@@ -153,6 +153,16 @@
   .round-stat-sub { font-size:11px; color:var(--dimmed); margin-top:2px; }
   @media(max-width:700px){.round-stats-row{grid-template-columns:repeat(2,1fr);}}
 
+  /* ROUND HIGHLIGHTS */
+  .highlights-block { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--green); padding:20px 24px; margin-bottom:32px; }
+  .highlights-eyebrow { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:12px; }
+  .highlights-title { font-size:20px; font-weight:800; margin-bottom:16px; }
+  .highlight-item { display:flex; align-items:baseline; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .highlight-item:last-child { border-bottom:none; }
+  .highlight-bullet { color:var(--green); font-size:16px; flex-shrink:0; }
+  .highlight-text { color:var(--dimmed); line-height:1.5; }
+  .highlight-text strong { color:var(--text); font-weight:700; }
+
   /* FUN STATS */
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:40px;}
   .stat-card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden;}
@@ -269,7 +279,47 @@
   .song-season-round { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); text-align:center; }
   .song-season-pts { font-family:'Space Mono',monospace; font-size:18px; font-weight:700; color:var(--green); text-align:right; }
   .song-season-header { display:grid; grid-template-columns:40px 1fr 80px 80px 60px; gap:12px; padding:10px 20px; background:var(--surface2); border:1px solid var(--border); border-bottom:none; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
-  /* ===================== MOBILE ===================== */
+  /* VOTING INTEL */
+  .voting-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
+  @media(max-width:900px){ .voting-grid { grid-template-columns:1fr; } }
+
+  .voting-card { background:var(--surface); border:1px solid var(--border); overflow:hidden; }
+  .voting-card-title { padding:14px 20px; background:var(--surface2); border-bottom:1px solid var(--border); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .voting-row { display:flex; align-items:center; gap:12px; padding:12px 20px; border-bottom:1px solid var(--border); transition:background 0.15s; }
+  .voting-row:last-child { border-bottom:none; }
+  .voting-row:hover { background:var(--surface2); }
+  .voting-row-rank { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); flex:0 0 24px; }
+  .voting-row-name { font-weight:600; font-size:13px; flex:1; }
+  .voting-row-bar-wrap { flex:0 0 80px; height:4px; background:var(--border); }
+  .voting-row-bar { height:100%; background:var(--green); }
+  .voting-row-bar.amber { background:var(--amber); }
+  .voting-row-bar.red { background:#e05353; }
+  .voting-row-val { font-family:'Space Mono',monospace; font-size:12px; color:var(--green); flex:0 0 48px; text-align:right; }
+  .voting-row-val.amber { color:var(--amber); }
+  .voting-row-val.red { color:#e05353; }
+  .voting-row-sub { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); flex:0 0 100px; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Matrix */
+  .matrix-wrap { overflow-x:auto; margin-bottom:32px; }
+  .matrix-table { border-collapse:collapse; min-width:100%; font-family:'Space Mono',monospace; font-size:10px; }
+  .matrix-table th { padding:8px 6px; background:var(--surface2); color:var(--muted); text-align:center; border:1px solid var(--border); white-space:nowrap; font-weight:400; letter-spacing:1px; }
+  .matrix-table th.row-header { text-align:right; padding-right:12px; min-width:110px; }
+  .matrix-table td { padding:7px 6px; text-align:center; border:1px solid var(--border); font-size:11px; color:var(--dimmed); min-width:36px; }
+  .matrix-table td.self { background:var(--surface2); color:var(--border); }
+  .matrix-table td.high { background:rgba(29,185,84,0.25); color:var(--green); font-weight:700; }
+  .matrix-table td.mid { background:rgba(29,185,84,0.1); color:var(--dimmed); }
+  .matrix-table td.zero { color:var(--border); }
+  .matrix-note { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:20px; }
+
+  /* Pairs */
+  .pairs-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
+  @media(max-width:900px){ .pairs-grid { grid-template-columns:1fr; } }
+  .pair-row { display:flex; align-items:center; gap:10px; padding:12px 20px; border-bottom:1px solid var(--border); }
+  .pair-row:last-child { border-bottom:none; }
+  .pair-names { font-weight:600; font-size:13px; flex:1; }
+  .pair-names span { color:var(--muted); font-weight:400; }
+  .pair-val { font-family:'Space Mono',monospace; font-size:13px; color:var(--green); font-weight:700; }
+  .pair-val.cold { color:#e05353; }
   @media(max-width:600px) {
     .header { padding:28px 20px 20px; }
     .header-title { font-size:28px; }
@@ -335,7 +385,7 @@
 
 <div class="nav-fade-wrap">
 <nav class="nav animate">
-  <button class="nav-tab active" onclick="showPanel('standings',this)">Standings</button>
+  <button class="nav-tab active" onclick="showPanel('standings',this)">Overview</button>
   <button class="nav-tab" onclick="showPanel('trajectory',this)">Season Trajectory</button>
   <button class="nav-tab" onclick="showPanel('rounds',this)">Round Results</button>
   <button class="nav-tab" onclick="showPanel('stats',this)">Fun Stats</button>
@@ -347,6 +397,7 @@
 
   <!-- ===== STANDINGS ===== -->
   <section class="panel active" id="panel-standings">
+    <div id="round-highlights"></div>
     <div class="section-title" style="margin-bottom:24px;">Full Standings — <span style="color:var(--green)">click any name for full profile</span></div>
     <div class="leaderboard animate" style="margin-bottom:32px;">
       <div class="lb-header">
@@ -388,6 +439,7 @@
       <div></div><div>Song</div><div style="text-align:center">Submitter</div><div style="text-align:center">Round</div><div style="text-align:right">Pts</div>
     </div>
     <div class="song-season-list" id="song-season-list"></div>
+    <div id="voting-sections"></div>
   </section>
 
   <!-- ===== PLAYER SUBMISSIONS ===== -->
@@ -768,8 +820,423 @@ const ROUNDS = [
 ];
 
 // =====================================================================
-// PLAYER COLORS for trajectory chart
+// VOTE DATA — individual votes per song per round
+// Format: { round, submitter, title, votes: [{voter, pts}] }
 // =====================================================================
+const VOTE_DATA = [
+  // ROUND 1
+  {r:1,sub:"Steffen LoCascio",title:"come on home",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Steffen LoCascio",title:"Last Train to London",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1}]},
+  {r:1,sub:"shaznasty",title:"No Broke Boys",votes:[{v:"Tej vill",p:2},{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:1,sub:"j.suastegui",title:"Let It All Out",votes:[{v:"Aaron Heger",p:2},{v:"Brendon Schmidt",p:2},{v:"Tyler Hundley",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"j.suastegui",title:"Man I Need",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Tej vill",title:"The Fate of Ophelia",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:1,sub:"Vic Alonso",title:"Yougotmefeeling",votes:[{v:"Aaron Heger",p:2},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:1,sub:"Vic Alonso",title:"I Run",votes:[{v:"Kevin Potts",p:2},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1}]},
+  {r:1,sub:"Brendon Schmidt",title:"Love Moves Slow",votes:[{v:"Kevin Potts",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Tej vill",title:"Blessings",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Kevin Potts",title:"I Only Smoke When I Drink",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Brendon Schmidt",title:"Gild the Lily",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"j.suastegui",title:"Ifyoucall",votes:[{v:"Aaron Heger",p:2},{v:"Tyler Hundley",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:1,sub:"Kevin Potts",title:"The Days - NOTION Remix",votes:[{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Ben King",title:"Madalena",votes:[{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Brendon Schmidt",title:"SEEIN' STARS",votes:[{v:"Kevin Potts",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:1,sub:"Aaron Heger",title:"Golden",votes:[{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Rick Rob",p:1}]},
+  {r:1,sub:"Kevin Potts",title:"Talk of the Town",votes:[{v:"shaznasty",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:1,sub:"Tej vill",title:"Love Sosa",votes:[{v:"Aaron Heger",p:2},{v:"shaznasty",p:1}]},
+  {r:1,sub:"Vic Alonso",title:"Dracula",votes:[{v:"Aaron Heger",p:2},{v:"Tej vill",p:1}]},
+  {r:1,sub:"Aaron Heger",title:"All I Need",votes:[{v:"Brendon Schmidt",p:1},{v:"Vic Alonso",p:1}]},
+  {r:1,sub:"Tyler Hundley",title:"DAISIES",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:1,sub:"Rick Rob",title:"Espresso",votes:[{v:"shaznasty",p:1},{v:"Tej vill",p:1}]},
+  {r:1,sub:"Rick Rob",title:"Si Antes Te Hubiera Conocido",votes:[{v:"j.suastegui",p:1},{v:"Tej vill",p:1}]},
+  {r:1,sub:"Aaron Heger",title:"Wood",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:1,sub:"Steffen LoCascio",title:"People Settle Down",votes:[{v:"Brendon Schmidt",p:1}]},
+  {r:1,sub:"Ben King",title:"The Little Mess You Made",votes:[{v:"Tyler Hundley",p:1}]},
+  {r:1,sub:"shaznasty",title:"Ordinary (feat. Luke Combs)",votes:[{v:"Tej vill",p:1}]},
+  {r:1,sub:"shaznasty",title:"Pink Pony Club",votes:[{v:"Rick Rob",p:1}]},
+  {r:1,sub:"Ben King",title:"There's A Rhythmn",votes:[{v:"shaznasty",p:1}]},
+  {r:1,sub:"Tyler Hundley",title:"No More Tears - live",votes:[{v:"Steffen LoCascio",p:1}]},
+  // ROUND 2
+  {r:2,sub:"Kevin Potts",title:"My Way",votes:[{v:"Vic Alonso",p:2},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:2,sub:"Brendon Schmidt",title:"Dust in the Wind",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"j.suastegui",title:"Free Bird",votes:[{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Brendon Schmidt",title:"Into the Mystic",votes:[{v:"Aaron Heger",p:2},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:2,sub:"Aaron Heger",title:"Let It Be",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:2,sub:"shaznasty",title:"One Last Breath",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Adam Share",title:"Now We Are Free",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1}]},
+  {r:2,sub:"Ben King",title:"Don't Let The Sun Go Down On Me",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:2,sub:"Rick Rob",title:"Stairway to Heaven",votes:[{v:"Aaron Heger",p:2},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1}]},
+  {r:2,sub:"Aaron Heger",title:"Good Riddance",votes:[{v:"Kevin Potts",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Aaron Heger",title:"Landslide",votes:[{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Ben King",title:"I Believe I Can Fly",votes:[{v:"Aaron Heger",p:1},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:2,sub:"j.suastegui",title:"Lucky Man",votes:[{v:"Kevin Potts",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:2,sub:"Tyler Hundley",title:"Big Pimpin'",votes:[{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:2,sub:"Ben King",title:"Will You Be There",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:2,sub:"j.suastegui",title:"Con Te Partirò",votes:[{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1}]},
+  {r:2,sub:"Rick Rob",title:"The End",votes:[{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Vic Alonso",title:"American Pie",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1}]},
+  {r:2,sub:"Tej vill",title:"Behind Blue Eyes",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1}]},
+  {r:2,sub:"Tej vill",title:"Turn The Page - Live",votes:[{v:"Kevin Potts",p:1},{v:"j.suastegui",p:1},{v:"Rick Rob",p:1}]},
+  {r:2,sub:"Rick Rob",title:"The Sound of Silence",votes:[{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:2,sub:"Brendon Schmidt",title:"Alive",votes:[{v:"Kevin Potts",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:2,sub:"Steffen LoCascio",title:"Home Sweet Home",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Kevin Potts",title:"Without You",votes:[{v:"shaznasty",p:1},{v:"Adam Share",p:1},{v:"Vic Alonso",p:1}]},
+  {r:2,sub:"Vic Alonso",title:"Jumper",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1}]},
+  {r:2,sub:"Kevin Potts",title:"Hail Mary",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:2,sub:"shaznasty",title:"The Largest",votes:[{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1}]},
+  {r:2,sub:"Steffen LoCascio",title:"Unchained Melody",votes:[{v:"Adam Share",p:1}]},
+  {r:2,sub:"Tyler Hundley",title:"Black Betty",votes:[{v:"j.suastegui",p:1}]},
+  {r:2,sub:"Steffen LoCascio",title:"Hit 'Em Up",votes:[{v:"Tyler Hundley",p:1}]},
+  // ROUND 3
+  {r:3,sub:"Aaron Heger",title:"All The Small Things",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"shaznasty",title:"Genie In a Bottle",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Tej vill",title:"Pretty Fly (For A White Guy)",votes:[{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Tyler Hundley",title:"The Real Slim Shady",votes:[{v:"Ben King",p:2},{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:3,sub:"Steffen LoCascio",title:"My Name Is",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Steffen LoCascio",title:"...Baby One More Time",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:3,sub:"Kevin Potts",title:"Thong Song",votes:[{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:3,sub:"j.suastegui",title:"Ms. Jackson",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:3,sub:"Tyler Hundley",title:"I Want It That Way",votes:[{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Ben King",title:"All Star",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:3,sub:"Steffen LoCascio",title:"Bye Bye Bye",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:3,sub:"Tej vill",title:"You Get What You Give",votes:[{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Aaron Heger",title:"Ride Wit Me",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:3,sub:"Rick Rob",title:"Nookie",votes:[{v:"Aaron Heger",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Kevin Potts",title:"The Bad Touch",votes:[{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Ben King",title:"Stacy's Mom",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1}]},
+  {r:3,sub:"Rick Rob",title:"Learn to Fly",votes:[{v:"Aaron Heger",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:3,sub:"Adam Share",title:"Raise Up",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1}]},
+  {r:3,sub:"Kevin Potts",title:"Who Let The Dogs Out",votes:[{v:"Tyler Hundley",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1}]},
+  {r:3,sub:"Adam Share",title:"Steal My Sunshine",votes:[{v:"Aaron Heger",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:3,sub:"Brendon Schmidt",title:"Slide",votes:[{v:"Aaron Heger",p:1},{v:"j.suastegui",p:1},{v:"Ben King",p:1}]},
+  {r:3,sub:"Brendon Schmidt",title:"Butterfly",votes:[{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:3,sub:"shaznasty",title:"Fuck It",votes:[{v:"Tej vill",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"Tyler Hundley",title:"Oops!...I Did It Again",votes:[{v:"Aaron Heger",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:3,sub:"Aaron Heger",title:"I'm Real - Murder Remix",votes:[{v:"j.suastegui",p:1},{v:"Adam Share",p:1}]},
+  {r:3,sub:"Ben King",title:"Summer Girls",votes:[{v:"Aaron Heger",p:1},{v:"Adam Share",p:1}]},
+  {r:3,sub:"shaznasty",title:"Bawitdaba",votes:[{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:3,sub:"j.suastegui",title:"Slow Jamz",votes:[{v:"Ben King",p:1}]},
+  {r:3,sub:"Tej vill",title:"Intergalactic",votes:[{v:"Adam Share",p:1}]},
+  {r:3,sub:"Brendon Schmidt",title:"Give Me Just One Night",votes:[{v:"shaznasty",p:1}]},
+  {r:3,sub:"Vic Alonso",title:"Hero",votes:[{v:"Adam Share",p:1}]},
+  {r:3,sub:"Adam Share",title:"No Sex",votes:[{v:"Rick Rob",p:1}]},
+  {r:3,sub:"Vic Alonso",title:"Cry Me a River",votes:[{v:"j.suastegui",p:1}]},
+  // ROUND 4
+  {r:4,sub:"Aaron Heger",title:"Space Jam",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"Tyler Hundley",title:"Scotty Doesn't Know",votes:[{v:"Kevin Potts",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"Tyler Hundley",title:"Lose Yourself",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Aaron Heger",title:"I Don't Want to Miss a Thing",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Steffen LoCascio",title:"Don't You (Forget About Me)",votes:[{v:"Brendon Schmidt",p:2},{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Adam Share",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"Aaron Heger",title:"Danger Zone",votes:[{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"shaznasty",title:"(I've Had) The Time Of My Life",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:4,sub:"Kevin Potts",title:"Stuck In The Middle With You",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:4,sub:"cflaherty120",title:"What Is Love",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Vic Alonso",title:"Tiny Dancer",votes:[{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:4,sub:"shaznasty",title:"Eye of the Tiger",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Tej vill",p:1},{v:"Rick Rob",p:1}]},
+  {r:4,sub:"Steffen LoCascio",title:"See You Again",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Brendon Schmidt",title:"In The Air Tonight",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"Steffen LoCascio",title:"My Heart Will Go On",votes:[{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Rick Rob",title:"What I've Done",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Vic Alonso",title:"Stayin Alive",votes:[{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:4,sub:"Rick Rob",title:"Fortunate Son",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:4,sub:"Ben King",title:"Grow Old with You",votes:[{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"shaznasty",title:"Mrs. Robinson",votes:[{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:4,sub:"Vic Alonso",title:"Kiss from a Rose",votes:[{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:4,sub:"cflaherty120",title:"No Time for Caution",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Tej vill",title:"Twist And Shout",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:4,sub:"Brendon Schmidt",title:"Bitter Sweet Symphony",votes:[{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:4,sub:"j.suastegui",title:"Come and Get Your Love",votes:[{v:"Aaron Heger",p:1},{v:"shaznasty",p:1}]},
+  {r:4,sub:"Ben King",title:"Life is a Highway",votes:[{v:"Tej vill",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"Kevin Potts",title:"Over The Rainbow",votes:[{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:4,sub:"j.suastegui",title:"We Don't Talk About Bruno",votes:[{v:"Adam Share",p:1}]},
+  {r:4,sub:"Brendon Schmidt",title:"Sister Christian",votes:[{v:"Adam Share",p:1}]},
+  {r:4,sub:"Adam Share",title:"Oh Yeah",votes:[{v:"Steffen LoCascio",p:1}]},
+  {r:4,sub:"Ben King",title:"You're The Best",votes:[{v:"Adam Share",p:1}]},
+  {r:4,sub:"Rick Rob",title:"We Are The Champions",votes:[{v:"Aaron Heger",p:1}]},
+  {r:4,sub:"Adam Share",title:"He Lives In You",votes:[{v:"Ben King",p:1}]},
+  {r:4,sub:"Tyler Hundley",title:"Footloose",votes:[{v:"Adam Share",p:1}]},
+  {r:4,sub:"Kevin Potts",title:"Let It Go",votes:[{v:"Aaron Heger",p:1}]},
+  {r:4,sub:"Adam Share",title:"Scarface Push It To The Limit",votes:[{v:"shaznasty",p:1}]},
+  // ROUND 5
+  {r:5,sub:"shaznasty",title:"Dancing On My Own",votes:[{v:"Aaron Heger",p:2},{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Aaron Heger",title:"Smalltown Boy",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Ben King",title:"I Touch Myself",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Brendon Schmidt",title:"It Feels So Good",votes:[{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Brendon Schmidt",title:"Enjoy the Silence",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Adam Share",title:"Baby Don't Go",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"j.suastegui",title:"I Feel Love",votes:[{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Tej vill",title:"Sweet Dreams",votes:[{v:"Kevin Potts",p:1},{v:"cflaherty120",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Vic Alonso",title:"Careless Whisper",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Brendon Schmidt",title:"Sadeness",votes:[{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Steffen LoCascio",title:"Murder On The Dancefloor",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Kevin Potts",title:"Believe",votes:[{v:"Aaron Heger",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Ben King",title:"Let's Have A Kiki",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Rick Rob",p:1}]},
+  {r:5,sub:"Steffen LoCascio",title:"Tainted Love",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Rick Rob",p:1}]},
+  {r:5,sub:"j.suastegui",title:"Blue Monday",votes:[{v:"Kevin Potts",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"Rick Rob",title:"Diamond Veins",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Tej vill",title:"Goodbye Horses",votes:[{v:"cflaherty120",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:5,sub:"Aaron Heger",title:"I'm Every Woman",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Rick Rob",p:1}]},
+  {r:5,sub:"Ben King",title:"Man! I Feel Like A Woman!",votes:[{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Adam Share",p:1}]},
+  {r:5,sub:"Kevin Potts",title:"Lotion",votes:[{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"Rick Rob",p:1}]},
+  {r:5,sub:"cflaherty120",title:"I'm Too Sexy",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:5,sub:"Vic Alonso",title:"Wicked Game",votes:[{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:5,sub:"Kevin Potts",title:"Drug",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1}]},
+  {r:5,sub:"Tyler Hundley",title:"Hungry Like the Wolf",votes:[{v:"shaznasty",p:1},{v:"Ben King",p:1}]},
+  {r:5,sub:"Steffen LoCascio",title:"I'm Every Woman (Whitney)",votes:[{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:5,sub:"Tyler Hundley",title:"Always Something There to Remind Me",votes:[{v:"Kevin Potts",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:5,sub:"shaznasty",title:"Eternal Flame",votes:[{v:"Tej vill",p:1},{v:"Adam Share",p:1}]},
+  {r:5,sub:"Adam Share",title:"Glory of Love",votes:[{v:"shaznasty",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"j.suastegui",title:"Somebody Else",votes:[{v:"Tyler Hundley",p:1},{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"cflaherty120",title:"Where Is My Mind?",votes:[{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1}]},
+  {r:5,sub:"Rick Rob",title:"Safe - Joris Voorn Remix",votes:[{v:"Adam Share",p:1}]},
+  {r:5,sub:"Tyler Hundley",title:"Heart Of Glass",votes:[{v:"Vic Alonso",p:1}]},
+  {r:5,sub:"shaznasty",title:"Lady - Hear Me Tonight",votes:[{v:"cflaherty120",p:1}]},
+  {r:5,sub:"Vic Alonso",title:"Creep",votes:[{v:"Tej vill",p:1}]},
+  {r:5,sub:"cflaherty120",title:"Goodbye, Horses",votes:[{v:"Kevin Potts",p:1}]},
+  // ROUND 6
+  {r:6,sub:"Kevin Potts",title:"Midnight City",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Tyler Hundley",title:"Night Moves",votes:[{v:"Aaron Heger",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Kevin Potts",title:"Nightcall",votes:[{v:"Brendon Schmidt",p:2},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Vic Alonso",title:"Ocean Drive",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Steffen LoCascio",title:"Something About Us",votes:[{v:"Aaron Heger",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Aaron Heger",title:"Shooting Stars",votes:[{v:"Kevin Potts",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:6,sub:"Steffen LoCascio",title:"Dreams",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:6,sub:"Vic Alonso",title:"Riders on the Storm",votes:[{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Aaron Heger",title:"Under the Bridge",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:6,sub:"Brendon Schmidt",title:"Breathe (In the Air)",votes:[{v:"cflaherty120",p:1},{v:"Tej vill",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Tej vill",title:"Closer",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Steffen LoCascio",title:"In The Air Tonight",votes:[{v:"shaznasty",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Brendon Schmidt",title:"Fire for You",votes:[{v:"Kevin Potts",p:1},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Ben King",title:"Fast Car",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Adam Share",p:1}]},
+  {r:6,sub:"shaznasty",title:"Pursuit Of Happiness",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Adam Share",title:"Days of Thunder",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:6,sub:"cflaherty120",title:"The Scientist",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Ben King",title:"Gravity - Live",votes:[{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:6,sub:"j.suastegui",title:"CHERIE",votes:[{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"j.suastegui",title:"Feel Good",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1}]},
+  {r:6,sub:"Aaron Heger",title:"Use Somebody",votes:[{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1}]},
+  {r:6,sub:"Tyler Hundley",title:"Electric Feel",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1}]},
+  {r:6,sub:"Brendon Schmidt",title:"Stranglehold",votes:[{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"j.suastegui",title:"No Place - Live from Joshua Tree",votes:[{v:"Kevin Potts",p:1},{v:"Tej vill",p:1}]},
+  {r:6,sub:"Tej vill",title:"Moondance",votes:[{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:6,sub:"Kevin Potts",title:"Faded",votes:[{v:"cflaherty120",p:1},{v:"Tej vill",p:1}]},
+  {r:6,sub:"cflaherty120",title:"Seek Bromance",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1}]},
+  {r:6,sub:"Ben King",title:"Northern Lights",votes:[{v:"Aaron Heger",p:1}]},
+  {r:6,sub:"Tyler Hundley",title:"Dear Mr. Fantasy",votes:[{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"Tej vill",title:"The Face",votes:[{v:"Vic Alonso",p:1}]},
+  {r:6,sub:"shaznasty",title:"World Hold On",votes:[{v:"cflaherty120",p:1}]},
+  {r:6,sub:"cflaherty120",title:"One Headlight",votes:[{v:"Tyler Hundley",p:1}]},
+  {r:6,sub:"Vic Alonso",title:"Maneater",votes:[{v:"shaznasty",p:1}]},
+  // ROUND 7
+  {r:7,sub:"j.suastegui",title:"Whatever You Like",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Adam Share",title:"I'm On A Boat",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:7,sub:"Ben King",title:"Sex & Drugs & House",votes:[{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Adam Share",title:"Infinity 2008",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Brendon Schmidt",title:"Cinema",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Kevin Potts",title:"Sexy Bitch",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Tyler Hundley",title:"Feel So Close",votes:[{v:"Kevin Potts",p:1},{v:"cflaherty120",p:1},{v:"Adam Share",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"j.suastegui",title:"Beautiful",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:7,sub:"j.suastegui",title:"Down",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Steffen LoCascio",title:"Wasted",votes:[{v:"Kevin Potts",p:1},{v:"Brendon Schmidt",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Adam Share",title:"Yes",votes:[{v:"Kevin Potts",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Brendon Schmidt",title:"Heads Will Roll",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"Steffen LoCascio",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"Rick Rob",title:"Escape Me",votes:[{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:7,sub:"Brendon Schmidt",title:"Promises",votes:[{v:"cflaherty120",p:1},{v:"Adam Share",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Vic Alonso",title:"Bulletproof",votes:[{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Rick Rob",p:1}]},
+  {r:7,sub:"Tyler Hundley",title:"Like A G6",votes:[{v:"Kevin Potts",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Vic Alonso",title:"We No Speak Americano",votes:[{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Rick Rob",p:1}]},
+  {r:7,sub:"Aaron Heger",title:"We Found Love",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Aaron Heger",title:"Whatcha Say",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1}]},
+  {r:7,sub:"shaznasty",title:"Lollipop",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Adam Share",p:1}]},
+  {r:7,sub:"Steffen LoCascio",title:"Levels",votes:[{v:"cflaherty120",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Vic Alonso",title:"Party In The U.S.A.",votes:[{v:"Tyler Hundley",p:1},{v:"Ben King",p:1}]},
+  {r:7,sub:"Kevin Potts",title:"Barbra Streisand",votes:[{v:"Tyler Hundley",p:1},{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"cflaherty120",title:"Miami 2 Ibiza",votes:[{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:7,sub:"Steffen LoCascio",title:"I'm Goin In",votes:[{v:"Tyler Hundley",p:1}]},
+  {r:7,sub:"Kevin Potts",title:"Pursuit Of Happiness Aoki",votes:[{v:"Brendon Schmidt",p:1}]},
+  {r:7,sub:"Tyler Hundley",title:"Day 'N' Nite",votes:[{v:"Aaron Heger",p:1}]},
+  {r:7,sub:"shaznasty",title:"Love Lockdown",votes:[{v:"Vic Alonso",p:1}]},
+  {r:7,sub:"shaznasty",title:"Disturbia",votes:[{v:"j.suastegui",p:1}]},
+  {r:7,sub:"Ben King",title:"Welcome To The Jungle",votes:[{v:"Rick Rob",p:1}]},
+  {r:7,sub:"Aaron Heger",title:"All Of The Lights",votes:[{v:"Adam Share",p:1}]},
+  {r:7,sub:"Rick Rob",title:"Illmerica",votes:[{v:"Adam Share",p:1}]},
+  {r:7,sub:"cflaherty120",title:"Fade Into Darkness",votes:[{v:"Rick Rob",p:1}]},
+  // ROUND 8
+  {r:8,sub:"Kevin Potts",title:"How You Remind Me",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:8,sub:"Kevin Potts",title:"She Hates Me",votes:[{v:"Tyler Hundley",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"shaznasty",title:"It's Been Awhile",votes:[{v:"Tej vill",p:2},{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1}]},
+  {r:8,sub:"Aaron Heger",title:"Blurry",votes:[{v:"Kevin Potts",p:1},{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Kevin Potts",title:"I Hate Everything About You",votes:[{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Vic Alonso",title:"Crazy Bitch",votes:[{v:"Tyler Hundley",p:1},{v:"j.suastegui",p:1},{v:"Adam Share",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:8,sub:"Brendon Schmidt",title:"Addicted",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Vic Alonso",title:"Lips Of An Angel",votes:[{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1}]},
+  {r:8,sub:"Ben King",title:"Headstrong",votes:[{v:"Aaron Heger",p:1},{v:"Tej vill",p:1},{v:"Brendon Schmidt",p:1},{v:"Steffen LoCascio",p:1},{v:"Rick Rob",p:1}]},
+  {r:8,sub:"Steffen LoCascio",title:"Alive",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1},{v:"Tej vill",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Brendon Schmidt",title:"Cold",votes:[{v:"Kevin Potts",p:1},{v:"Tej vill",p:1},{v:"Steffen LoCascio",p:1},{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"cflaherty120",title:"Here Without You",votes:[{v:"Tej vill",p:2},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Ben King",p:1}]},
+  {r:8,sub:"shaznasty",title:"Here's to the Night",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Adam Share",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Vic Alonso",title:"It's Not Over",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1}]},
+  {r:8,sub:"cflaherty120",title:"With Arms Wide Open",votes:[{v:"Tyler Hundley",p:1},{v:"shaznasty",p:1},{v:"j.suastegui",p:1},{v:"Tej vill",p:1}]},
+  {r:8,sub:"Tyler Hundley",title:"Let Her Cry",votes:[{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1},{v:"Ben King",p:1}]},
+  {r:8,sub:"Steffen LoCascio",title:"Click Click Boom",votes:[{v:"Brendon Schmidt",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Tyler Hundley",title:"Here I Go Again",votes:[{v:"Adam Share",p:1},{v:"Rick Rob",p:1},{v:"Ben King",p:1}]},
+  {r:8,sub:"Rick Rob",title:"Bullet With Butterfly Wings",votes:[{v:"Kevin Potts",p:1},{v:"Aaron Heger",p:1},{v:"Adam Share",p:1}]},
+  {r:8,sub:"Steffen LoCascio",title:"Break Stuff",votes:[{v:"Kevin Potts",p:1},{v:"Rick Rob",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"Rick Rob",title:"The Kids Aren't Alright",votes:[{v:"cflaherty120",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1}]},
+  {r:8,sub:"Aaron Heger",title:"Last Resort",votes:[{v:"Kevin Potts",p:1},{v:"shaznasty",p:1},{v:"Adam Share",p:1}]},
+  {r:8,sub:"Tej vill",title:"When I'm Gone",votes:[{v:"cflaherty120",p:1},{v:"j.suastegui",p:1},{v:"Rick Rob",p:1}]},
+  {r:8,sub:"cflaherty120",title:"One Last Breath",votes:[{v:"Aaron Heger",p:1},{v:"j.suastegui",p:1}]},
+  {r:8,sub:"Aaron Heger",title:"Meant to Live",votes:[{v:"shaznasty",p:1},{v:"Brendon Schmidt",p:1}]},
+  {r:8,sub:"Tej vill",title:"Fat Bottomed Girls",votes:[{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1}]},
+  {r:8,sub:"Rick Rob",title:"The Pretender",votes:[{v:"Aaron Heger",p:1},{v:"cflaherty120",p:1}]},
+  {r:8,sub:"j.suastegui",title:"Rockstar",votes:[{v:"Ben King",p:1},{v:"Vic Alonso",p:1}]},
+  {r:8,sub:"j.suastegui",title:"You And Me",votes:[{v:"Aaron Heger",p:1},{v:"Tyler Hundley",p:1}]},
+  {r:8,sub:"Tyler Hundley",title:"Kryptonite",votes:[{v:"cflaherty120",p:1},{v:"j.suastegui",p:1}]},
+  {r:8,sub:"j.suastegui",title:"Iris",votes:[{v:"Tyler Hundley",p:1},{v:"Adam Share",p:1}]},
+  {r:8,sub:"shaznasty",title:"The Diary Of Jane",votes:[{v:"Kevin Potts",p:1}]},
+  {r:8,sub:"Brendon Schmidt",title:"Cumbersome",votes:[{v:"Kevin Potts",p:1}]},
+];
+
+// =====================================================================
+// RENDER VOTING INTEL
+// =====================================================================
+function renderVoting() {
+  // Build the vote matrix: matrix[voter][submitter] = total pts given
+  const matrix = {};
+  const totalGiven = {};   // voter -> total pts given
+  const totalReceived = {}; // submitter -> total pts received via votes
+  const voteCount = {};    // voter -> number of individual votes cast
+  const doubleVotes = {};  // voter -> number of 2pt votes
+
+  PLAYERS.forEach(p => {
+    matrix[p] = {};
+    PLAYERS.forEach(q => matrix[p][q] = 0);
+    totalGiven[p] = 0;
+    totalReceived[p] = 0;
+    voteCount[p] = 0;
+    doubleVotes[p] = 0;
+  });
+
+  VOTE_DATA.forEach(song => {
+    song.votes.forEach(v => {
+      if (!matrix[v.v]) return;
+      matrix[v.v][song.sub] += v.p;
+      totalGiven[v.v] += v.p;
+      totalReceived[song.sub] += v.p;
+      voteCount[v.v]++;
+      if (v.p === 2) doubleVotes[v.v]++;
+    });
+  });
+
+  // Generosity: avg pts per vote
+  const generosity = PLAYERS.map(p => ({
+    name: p,
+    avg: voteCount[p] > 0 ? totalGiven[p] / voteCount[p] : 0,
+    total: totalGiven[p],
+    count: voteCount[p],
+    doubles: doubleVotes[p]
+  })).sort((a,b) => b.avg - a.avg);
+
+  // Most votes given
+  const mostActive = [...PLAYERS].map(p => ({
+    name: p, count: voteCount[p], total: totalGiven[p]
+  })).sort((a,b) => b.count - a.count);
+
+  // Biggest fan pairs (mutual support)
+  const pairs = [];
+  PLAYERS.forEach((p, i) => {
+    PLAYERS.forEach((q, j) => {
+      if (j <= i) return;
+      const mutual = matrix[p][q] + matrix[q][p];
+      pairs.push({ a: p, b: q, mutual, aToB: matrix[p][q], bToA: matrix[q][p] });
+    });
+  });
+  pairs.sort((a,b) => b.mutual - a.mutual);
+  const coldPairs = [...pairs].filter(p => p.mutual === 0 || p.mutual <= 2).sort((a,b) => a.mutual - b.mutual).slice(0,8);
+
+  // Each player's top recipient and top supporter
+  const profiles = PLAYERS.map(p => {
+    const gave = PLAYERS.filter(q => q !== p).map(q => ({ name:q, pts: matrix[p][q] })).sort((a,b)=>b.pts-a.pts);
+    const received = PLAYERS.filter(q => q !== p).map(q => ({ name:q, pts: matrix[q][p] })).sort((a,b)=>b.pts-a.pts);
+    return { name:p, topRecipient: gave[0], topSupporter: received[0], totalGiven: totalGiven[p], totalReceived: totalReceived[p] };
+  }).sort((a,b) => b.totalReceived - a.totalReceived);
+
+  const maxGiven = Math.max(...PLAYERS.map(p => totalGiven[p]));
+  const maxCount = mostActive[0].count;
+  const maxGenerous = generosity[0].avg;
+
+  document.getElementById('voting-sections').innerHTML = `
+
+    <div class="section-title" style="margin-top:40px;">🎁 Who Each Player Votes For Most</div>
+    <div class="voting-grid">
+      <div class="voting-card">
+        ${profiles.map(p => `
+          <div class="voting-row">
+            <div class="voting-row-name">${p.name}</div>
+            <div class="voting-row-bar-wrap"><div class="voting-row-bar amber" style="width:${Math.round(p.topRecipient.pts/maxGiven*100)}%"></div></div>
+            <div class="voting-row-val amber">${p.topRecipient.name.split(' ')[0]}</div>
+            <div class="voting-row-sub">${p.topRecipient.pts} pts</div>
+          </div>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);padding:24px;color:var(--muted);font-family:'Space Mono',monospace;font-size:11px;text-align:center;line-height:1.8;">
+        Each player's #1 most-supported<br>submitter by total points given
+      </div>
+    </div>
+
+    <div class="section-title">🤝 Biggest Mutual Support Pairs</div>
+    <div class="pairs-grid">
+      <div class="voting-card">
+        <div class="voting-card-title">Top 10 — highest combined pts exchanged</div>
+        ${pairs.slice(0,10).map((p,i) => `
+          <div class="pair-row">
+            <div class="voting-row-rank">${i+1}</div>
+            <div class="pair-names">${p.a} <span>&</span> ${p.b}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);flex:0 0 100px;text-align:right">${p.a.split(' ')[0]}→${p.bToA} · ${p.b.split(' ')[0]}→${p.aToB}</div>
+            <div class="pair-val">${p.mutual} pts</div>
+          </div>`).join('')}
+      </div>
+      <div class="voting-card">
+        <div class="voting-card-title" style="color:#e05353">🥶 Coldest Pairs — lowest mutual support</div>
+        ${coldPairs.map(p => `
+          <div class="pair-row">
+            <div class="pair-names">${p.a} <span>&</span> ${p.b}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);flex:0 0 100px;text-align:right">${p.a.split(' ')[0]}→${p.bToA} · ${p.b.split(' ')[0]}→${p.aToB}</div>
+            <div class="pair-val cold">${p.mutual} pts</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-title">📊 Full Vote Matrix — pts each voter gave to each submitter (all 8 rounds)</div>
+    <p class="matrix-note">Rows = voter · Columns = submitter · Green = highest for that voter</p>
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <tr>
+          <th class="row-header">Voter ↓ / Sub →</th>
+          ${PLAYERS.map(p => `<th title="${p}">${p.split(' ')[0]}</th>`).join('')}
+          <th>Total</th>
+        </tr>
+        ${PLAYERS.map(voter => {
+          const rowMax = Math.max(...PLAYERS.filter(s=>s!==voter).map(s=>matrix[voter][s]));
+          return `<tr>
+            <th class="row-header">${voter}</th>
+            ${PLAYERS.map(sub => {
+              if (voter === sub) return `<td class="self">—</td>`;
+              const val = matrix[voter][sub];
+              const cls = val === 0 ? 'zero' : val >= rowMax && rowMax > 0 ? 'high' : val >= rowMax * 0.5 ? 'mid' : '';
+              return `<td class="${cls}">${val || '—'}</td>`;
+            }).join('')}
+            <td style="color:var(--green);font-weight:700">${totalGiven[voter]}</td>
+          </tr>`;
+        }).join('')}
+        <tr>
+          <th class="row-header">Total Received</th>
+          ${PLAYERS.map(sub => `<th style="color:var(--green)">${totalReceived[sub]}</th>`).join('')}
+          <th></th>
+        </tr>
+      </table>
+    </div>
+  `;
+}
 const PLAYER_COLORS = [
   '#1DB954','#e05353','#f5a623','#5b9cf6','#c084fc',
   '#34d399','#fb7185','#fbbf24','#60a5fa','#a78bfa',
@@ -1225,30 +1692,69 @@ function computeAffinity() {
 // =====================================================================
 function renderStandings() {
   const ranked = computeScores();
+  const lastRound = ROUNDS[ROUNDS.length - 1];
 
-  // Season stats mini
-  const totalSongs = ROUNDS.reduce((a,r)=>a+r.songs.length,0);
-  const allPts = ROUNDS.flatMap(r=>r.songs.map(s=>s.pts));
-  const highestPts = Math.max(...allPts);
-  const highestSong = ROUNDS.flatMap(r=>r.songs).find(s=>s.pts===highestPts);
-  const zeroSongs = allPts.filter(p=>p===0).length;
+  // --- Compute highlights for the latest round ---
+  const perPlayer = {};
+  PLAYERS.forEach(p => perPlayer[p] = 0);
+  lastRound.songs.forEach(s => perPlayer[s.sub] += s.pts);
 
-  // Best single-round player score for standings card
-  let standingsBestRoundScore = 0, standingsBestRoundPlayer = '';
-  ROUNDS.forEach(r => {
-    const perPlayer = {};
-    r.songs.forEach(s => { perPlayer[s.sub]=(perPlayer[s.sub]||0)+s.pts; });
-    Object.entries(perPlayer).forEach(([p,pts]) => {
-      if(pts > standingsBestRoundScore) { standingsBestRoundScore=pts; standingsBestRoundPlayer=p; }
+  const playerRows = Object.entries(perPlayer)
+    .filter(([p]) => lastRound.songs.some(s => s.sub === p))
+    .map(([name, pts]) => ({ name, pts }))
+    .sort((a, b) => b.pts - a.pts);
+
+  const roundWinner = playerRows[0];
+  const topSong = [...lastRound.songs].sort((a, b) => b.pts - a.pts)[0];
+  const zeroVoteSongs = lastRound.songs.filter(s => s.pts === 0);
+  const zeroVotePlayers = [...new Set(zeroVoteSongs.map(s => s.sub))];
+
+  // Who had biggest score jump vs previous round
+  let biggestRiser = null, biggestDrop = null;
+  if (ROUNDS.length >= 2) {
+    const prevRound = ROUNDS[ROUNDS.length - 2];
+    const prevPerPlayer = {};
+    PLAYERS.forEach(p => prevPerPlayer[p] = 0);
+    prevRound.songs.forEach(s => prevPerPlayer[s.sub] += s.pts);
+    let maxRise = -Infinity, maxDrop = Infinity;
+    PLAYERS.forEach(p => {
+      const curr = perPlayer[p] || 0;
+      const prev = prevPerPlayer[p] || 0;
+      if (lastRound.songs.some(s => s.sub === p)) {
+        const delta = curr - prev;
+        if (delta > maxRise) { maxRise = delta; biggestRiser = { name: p, delta, pts: curr }; }
+        if (delta < maxDrop) { maxDrop = delta; biggestDrop = { name: p, delta, pts: curr }; }
+      }
     });
-  });
+  }
 
-  document.getElementById('season-stats-mini').innerHTML = `
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Total songs submitted</div><div class="podium-pts">${totalSongs}</div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Most pts in a single round</div><div class="podium-pts">${standingsBestRoundScore} <span style="font-size:10px;color:var(--muted)">${standingsBestRoundPlayer}</span></div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Highest single song score</div><div class="podium-pts">${highestPts} pts</div></div>
-    <div class="podium-row" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="font-size:11px;color:var(--muted)">↳ best song</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green);line-height:1.4">${highestSong.title}</div><div style="font-size:11px;color:var(--dimmed)">${highestSong.artist} · ${highestSong.sub}</div></div>
-    <div class="podium-row"><div style="font-size:13px;color:var(--dimmed);flex:1">Songs with 0 votes</div><div class="podium-pts" style="color:var(--muted)">${zeroSongs}</div></div>
+  // Season leader after this round
+  const leader = ranked[0];
+  const second = ranked[1];
+  const gap = leader.pts - second.pts;
+
+  const highlights = [
+    `<strong>${roundWinner.name}</strong> won the round with <strong>${roundWinner.pts} pts</strong>`,
+    `Top song: <strong>${topSong.title}</strong> by ${topSong.artist} — <strong>${topSong.pts} pts</strong> (${topSong.voters} voters), submitted by ${topSong.sub}`,
+    `<strong>${leader.name}</strong> leads the season with <strong>${leader.pts} pts</strong>, up <strong>${gap} pts</strong> over ${second.name}`,
+    biggestRiser && biggestRiser.delta > 0
+      ? `<strong>${biggestRiser.name}</strong> had the biggest jump this round: <strong>+${biggestRiser.delta} pts</strong> vs last round`
+      : null,
+    zeroVotePlayers.length > 0
+      ? `<strong>${zeroVotePlayers.join(', ')}</strong> went home empty — ${zeroVoteSongs.length} song${zeroVoteSongs.length !== 1 ? 's' : ''} received 0 votes`
+      : `Everyone scored this round — no zero-vote songs 🎉`,
+  ].filter(Boolean);
+
+  document.getElementById('round-highlights').innerHTML = `
+    <div class="highlights-block">
+      <div class="highlights-eyebrow">Latest Round — Round ${lastRound.num}</div>
+      <div class="highlights-title">${lastRound.name}</div>
+      ${highlights.map(h => `
+        <div class="highlight-item">
+          <span class="highlight-bullet">›</span>
+          <span class="highlight-text">${h}</span>
+        </div>`).join('')}
+    </div>
   `;
 
   // Full leaderboard
@@ -1530,6 +2036,7 @@ function renderStats() {
 
   // Taste table
   renderTasteTable('score');
+  renderVoting();
 }
 
 let currentSort = 'score';
